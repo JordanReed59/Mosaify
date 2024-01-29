@@ -2,10 +2,10 @@ locals {
   repo = var.repo
   environment = var.environment
   branch = var.branch
-  namespace = "${repo}-${environment}-${branch}"
+  namespace = "${local.repo}-${local.environment}-${local.branch}"
   tags = {
-    "repo" : repo,
-    "environment" : environment,
-    "branch" : branch,
+    "repo" : local.repo,
+    "environment" : local.environment,
+    "branch" : local.branch,
   }
 }
