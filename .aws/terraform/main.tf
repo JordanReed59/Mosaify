@@ -5,3 +5,7 @@ module "namespace" {
   branch = var.branch
 }
 
+resource "aws_secretsmanager_secret" "spotify_secret" {
+  name = "${module.namespace.namespace}-SPOTIFY_CLIENT_CREDENTIALS"
+  tags = module.namespace.tags
+}
