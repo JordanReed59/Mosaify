@@ -10,7 +10,7 @@ permissions:
       contents: read # This is required for actions/checkout
       pull-requests: write # This is required for gh bot to comment PR
 env:
-  TF_LOG: TRACE
+  TF_LOG: INFO
   AWS_REGION: ${{ secrets.AWS_REGION }}
   AWS_BUCKET_NAME: ${{ secrets.AWS_BUCKET_NAME }}
   AWS_BUCKET_KEY_NAME: ${{ secrets.AWS_BUCKET_KEY_NAME }}
@@ -156,6 +156,13 @@ jobs:
       - name: Terraform Validate
         id: validate
         run: terraform validate -no-color
+
+      - name: Terraform Variables
+        id: variables
+        run: |
+          echo "TF_VAR_repo=${REPO_NAME}" >> $GITHUB_ENV
+          echo "TF_VAR_environment=${ENV}" >> $GITHUB_ENV
+          echo "TF_VAR_branch=${GITHUB_BRANCH_NAME}" >> $GITHUB_ENV
 
       - name: Terraform Apply
         run: terraform apply -auto-approve -input=false
