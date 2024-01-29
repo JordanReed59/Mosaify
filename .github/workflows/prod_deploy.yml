@@ -17,6 +17,7 @@ env:
   AWS_TF_ROLE: ${{ secrets.AWS_TF_ROLE }}
   AWS_ROLE: ${{ secrets.AWS_PROD_ROLE }}
   GITHUB_BRANCH_NAME: ${{ github.ref_name }}
+  ENV: prod
 
 jobs:
   prod-deploy:
