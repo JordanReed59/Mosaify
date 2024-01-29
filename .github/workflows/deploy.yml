@@ -82,9 +82,9 @@ jobs:
       - name: Terraform Variables
         id: variables
         run: |
-          export TF_VAR_repo=$REPO_NAME
-          export TF_VAR_environment=$ENV
-          export TF_VAR_branch=$GITHUB_BRANCH_NAME
+          echo "TF_VAR_repo=${REPO_NAME}" >> $GITHUB_ENV
+          echo "TF_VAR_environment=${ENV}" >> $GITHUB_ENV
+          echo "TF_VAR_branch=${GITHUB_BRANCH_NAME}" >> $GITHUB_ENV
 
       - name: Terraform Plan
         id: plan
