@@ -1,8 +1,9 @@
 name: "Terraform Prod Deploy"
 on:
   create:
-    branches-ignore:    
-      - '*'
+    branches:
+      ignore:
+        - '*'
     tags:
       - '*'
 permissions:
