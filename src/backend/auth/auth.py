@@ -11,7 +11,7 @@ SECRET_NAME = os.environ.get("SECRET_NAME", "blank")
 REGION = os.environ.get("REGION", "blank")
 TOKEN_URL = os.environ.get("TOKEN_URL", "blank")
 SPOTIFY_CREDENTIALS = {}
-
+print("Hello from outside handler")
 
 # Obtain spoitify credentials from secrets manager
 def get_secret():
