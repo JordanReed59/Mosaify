@@ -113,7 +113,7 @@ resource "aws_iam_role_policy_attachment" "_attach_iam_policy_to_iam_url_role" {
 }
 
 resource "aws_iam_policy" "iam_policy_for_url_lambda" {
-  name         = "${module.namespace.namespace}-auth-role-policy"
+  name         = "${module.namespace.namespace}-url-role-policy"
   description  = "AWS IAM Policy for Mosaify url lambda"
   policy       = data.aws_iam_policy_document.url_role_policy.json
 }
