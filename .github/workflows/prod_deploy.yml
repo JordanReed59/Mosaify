@@ -1,10 +1,7 @@
 name: "Terraform Prod Deploy"
 on:
-  create:
-    branches:
-      - '!*'
-    tags:
-      - '*'
+  release:
+    types: [published]
 permissions:
       id-token: write # This is required for aws oidc connection
       contents: read # This is required for actions/checkout
