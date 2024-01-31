@@ -42,7 +42,7 @@ jobs:
             zip -q -r -g ./zips/auth.zip ./auth_python
 
         - name: Add source code to python dependencies zip
-          run: zip -q -g ./zips/auth.zip ./auth/auth.py
+          run: zip -g ./zips/auth.zip ./auth/auth.py
 
         - name: Upload artifact for deployment job
           uses: actions/upload-artifact@v2
