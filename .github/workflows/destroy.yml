@@ -14,6 +14,49 @@ env:
   GITHUB_BRANCH_NAME: ${{ github.ref_name }}
 
 jobs:
+  build:
+      runs-on: ubuntu-latest
+      defaults:
+        run:
+          shell: bash
+          working-directory: src/backend
+      steps:
+        - name: Git checkout
+          uses: actions/checkout@v3
+
+        - name: Setup python
+          uses: actions/setup-python@v4
+          with:
+            python-version: '3.12'
+
+        - name: Install python dependencies
+          run: |
+            pip install --quiet -r ./auth/requirements.txt -t auth_python
+            pip install --quiet -r ./url/requirements.txt -t url_python
+
+        - name: Zip python dependencies
+          run: |
+            mkdir -p zips
+            cd auth_python
+            zip -q -r -g ../zips/auth.zip .
+            cd ..
+            cd url_python
+            zip -q -r -g ../zips/url.zip .
+
+        - name: Add source code to python dependencies zip
+          run: |
+            cd ./auth
+            zip -q -g ../zips/auth.zip auth.py
+            cd ..
+            cd ./url
+            zip -q -g ../zips/url.zip url.py
+
+        - name: Upload artifact for deployment job
+          uses: actions/upload-artifact@v2
+          with:
+            name: python_deployment
+            path: src/backend/zips
+            if-no-files-found: error
   destroy:
     runs-on: ubuntu-latest
     defaults:
