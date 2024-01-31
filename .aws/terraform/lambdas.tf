@@ -8,6 +8,7 @@ resource "aws_lambda_function" "test_lambda" {
   handler       = "auth.lambda_handler"
   role          = aws_iam_role.lambda_role.arn
   runtime       = "python3.12"
+  memory_size   = 128
   source_code_hash = filebase64sha256("${path.module}/zips/auth.zip") #in pipeline will mv zip to backend folder
 #   depends_on = [aws_iam_role_policy_attachment.attach_iam_policy_to_iam_role]
   environment {
