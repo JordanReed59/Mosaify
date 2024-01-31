@@ -41,10 +41,10 @@ jobs:
         - name: Zip python dependencies
           run: |
             mkdir -p zips
-            zip -q -r -g ./zips/auth.zip ./auth_python
+            zip -r -g ./zips/auth.zip ./auth_python
 
-        # - name: Add source code to python dependencies zip
-        #   run: zip -g ./zips/auth.zip ./auth/auth.py
+        - name: Unzip
+          run: unzip ./zips/auth.zip; ls
 
         - name: Upload artifact for deployment job
           uses: actions/upload-artifact@v2
