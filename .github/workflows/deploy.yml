@@ -45,7 +45,7 @@ jobs:
         - name: Add source code to python dependencies zip
           run: |
             cd ./auth
-            zip -q -g ./zips/auth.zip auth.py
+            zip -q -g ../zips/auth.zip auth.py
 
         - name: Unzip
           run: unzip -l ./zips/auth.zip
