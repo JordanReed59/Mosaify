@@ -90,7 +90,7 @@ jobs:
           path: .aws/terraform/zips
 
       - name: View directory
-        run: ls
+        run: ls zips
 
   #     - name: Configure AWS credentials from AWS account
   #       uses: aws-actions/configure-aws-credentials@v1
