@@ -39,7 +39,7 @@ jobs:
         - name: Zip python dependencies
           run: |
             mkdir -p zips
-            touch .zips/test.txt
+            touch ./zips/test.txt
             zip -q -r -g ./zips/auth.zip ./auth_python; ls -lh zips
 
         - name: Add source code to python dependencies zip
