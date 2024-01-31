@@ -82,14 +82,14 @@ jobs:
             exit 1
           fi
 
-        - name: Download artifact from build job
-          uses: actions/download-artifact@v2
-          with:
-            name: python_deployment
-            path: .aws/terraform/
+      - name: Download artifact from build job
+        uses: actions/download-artifact@v2
+        with:
+          name: python_deployment
+          path: .aws/terraform/
 
-        - name: View directory
-          run: ls
+      - name: View directory
+        run: ls
 
   #     - name: Configure AWS credentials from AWS account
   #       uses: aws-actions/configure-aws-credentials@v1
