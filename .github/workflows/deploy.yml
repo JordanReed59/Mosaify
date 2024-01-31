@@ -33,18 +33,17 @@ jobs:
           with:
             python-version: '3.12'
 
-        - name: Install python dependencies and add source code
-          run: |
-            pip install --quiet -r ./auth/requirements.txt -t auth_python
-            cp ./auth/auth.py ./auth_python
+        - name: Install python dependencies
+          run: pip install --quiet -r ./auth/requirements.txt -t auth_python
 
         - name: Zip python dependencies
           run: |
             mkdir -p zips
-            zip -r -g ./zips/auth.zip ./auth_python
+            cd auth_python
+            zip -q -r -g ../zips/auth.zip .
 
-        - name: Unzip
-          run: unzip ./zips/auth.zip; ls
+        - name: Add source code to python dependencies zip
+          run: ls; zip -q -g ./zips/auth.zip ./auth/auth.py
 
         - name: Upload artifact for deployment job
           uses: actions/upload-artifact@v2
