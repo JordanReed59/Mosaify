@@ -3,13 +3,13 @@
 resource "aws_lambda_function" "test_lambda" {
   # If the file is not in the current working directory you will need to include a
   # path.module in the filename.
-  filename      = "lambda_function_payload.zip"
+  filename      = "${path.module}/zips/auth.zip"
   function_name = "${module.namespace.namespace}-auth"
   handler       = "auth.lambda_handler"
   role          = aws_iam_role.lambda_role.arn
   runtime       = "python3.12"
   memory_size   = 128
-  source_code_hash = filebase64sha256("${path.module}/zips/auth.zip") #in pipeline will mv zip to backend folder
+  source_code_hash = filebase64sha256("${path.module}/zips/auth.zip")
 #   depends_on = [aws_iam_role_policy_attachment.attach_iam_policy_to_iam_role]
   environment {
     variables = {
