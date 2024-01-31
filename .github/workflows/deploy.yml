@@ -34,13 +34,13 @@ jobs:
             python-version: '3.12'
 
         - name: Install python dependencies
-          run: pip install -r ./auth/requirements.txt -t ./auth
+          run: pip install -r ./auth/requirements.txt -t auth_python
 
         - name: Zip python dependencies
-          run: zip -q -r -g ./auth/auth.zip auth; ls -lh
+          run: zip -q -r -g ./auth/auth.zip ./auth_python; ls -lh auth
 
         - name: Add source code to python dependencies zip
-          run: zip -q -g auth.zip ./auth/auth.py; ls -lh
+          run: zip -q -g ./auth/auth.zip ./auth/auth.py; ls -lh auth
 
         - name: Upload artifact for deployment job
           uses: actions/upload-artifact@v2
