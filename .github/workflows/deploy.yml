@@ -51,152 +51,152 @@ jobs:
             path: src/backend/auth/auth.zip
             if-no-files-found: error
             
-  plan:
-    needs: build
-    runs-on: ubuntu-latest
-    defaults:
-      run:
-        shell: bash
-        working-directory: .aws/terraform
-    steps:
-      - name: Git checkout
-        uses: actions/checkout@v3
+  # plan:
+  #   needs: build
+  #   runs-on: ubuntu-latest
+  #   defaults:
+  #     run:
+  #       shell: bash
+  #       working-directory: .aws/terraform
+  #   steps:
+  #     - name: Git checkout
+  #       uses: actions/checkout@v3
 
-      - name: Set ENV variables
-        run: |
-          echo "REPO_NAME=${GITHUB_REPOSITORY#$GITHUB_REPOSITORY_OWNER/}" >> $GITHUB_ENV
-          if [[ $GITHUB_REF == refs/heads/main ]]; then
-            echo "Using QA Role"
-            echo "AWS_ROLE=${{ secrets.AWS_QA_ROLE }}" >> $GITHUB_ENV
-            echo "ENV=qa" >> $GITHUB_ENV
-          elif [[ $GITHUB_REF == refs/heads/develop ]]; then
-            echo "Using Test Role"
-            echo "AWS_ROLE=${{ secrets.AWS_TEST_ROLE }}" >> $GITHUB_ENV
-            echo "ENV=test" >> $GITHUB_ENV
-          elif [[ $GITHUB_REF == refs/heads/feature/* || $GITHUB_REF == refs/heads/bugfix/* || $GITHUB_REF == refs/heads/task/* || $GITHUB_REF == refs/heads/hotfix/* ]]; then
-            echo "Using Dev Role"
-            echo "AWS_ROLE=${{ secrets.AWS_DEV_ROLE }}" >> $GITHUB_ENV
-            echo "ENV=dev" >> $GITHUB_ENV
-          else
-            echo "Invalid branch name. Stopping the action."
-            exit 1
-          fi
+  #     - name: Set ENV variables
+  #       run: |
+  #         echo "REPO_NAME=${GITHUB_REPOSITORY#$GITHUB_REPOSITORY_OWNER/}" >> $GITHUB_ENV
+  #         if [[ $GITHUB_REF == refs/heads/main ]]; then
+  #           echo "Using QA Role"
+  #           echo "AWS_ROLE=${{ secrets.AWS_QA_ROLE }}" >> $GITHUB_ENV
+  #           echo "ENV=qa" >> $GITHUB_ENV
+  #         elif [[ $GITHUB_REF == refs/heads/develop ]]; then
+  #           echo "Using Test Role"
+  #           echo "AWS_ROLE=${{ secrets.AWS_TEST_ROLE }}" >> $GITHUB_ENV
+  #           echo "ENV=test" >> $GITHUB_ENV
+  #         elif [[ $GITHUB_REF == refs/heads/feature/* || $GITHUB_REF == refs/heads/bugfix/* || $GITHUB_REF == refs/heads/task/* || $GITHUB_REF == refs/heads/hotfix/* ]]; then
+  #           echo "Using Dev Role"
+  #           echo "AWS_ROLE=${{ secrets.AWS_DEV_ROLE }}" >> $GITHUB_ENV
+  #           echo "ENV=dev" >> $GITHUB_ENV
+  #         else
+  #           echo "Invalid branch name. Stopping the action."
+  #           exit 1
+  #         fi
 
-      - name: Configure AWS credentials from AWS account
-        uses: aws-actions/configure-aws-credentials@v1
-        with:
-          role-to-assume: ${{ env.AWS_ROLE }}
-          aws-region: ${{ env.AWS_REGION }}
-          role-session-name: GitHub-OIDC-TERRAFORM
+  #     - name: Configure AWS credentials from AWS account
+  #       uses: aws-actions/configure-aws-credentials@v1
+  #       with:
+  #         role-to-assume: ${{ env.AWS_ROLE }}
+  #         aws-region: ${{ env.AWS_REGION }}
+  #         role-session-name: GitHub-OIDC-TERRAFORM
 
-      - name: Setup Terraform
-        uses: hashicorp/setup-terraform@v2
-        with:
-          terraform_version: 1.2.5
+  #     - name: Setup Terraform
+  #       uses: hashicorp/setup-terraform@v2
+  #       with:
+  #         terraform_version: 1.2.5
 
-      - name: Terraform fmt
-        id: fmt
-        run: terraform fmt -check
-        continue-on-error: true
+  #     - name: Terraform fmt
+  #       id: fmt
+  #       run: terraform fmt -check
+  #       continue-on-error: true
 
-      - name: Terraform Init
-        id: init
-        run: terraform init -backend-config="bucket=${AWS_BUCKET_NAME}" -backend-config="key=${AWS_BUCKET_KEY_NAME}" -backend-config="region=${AWS_REGION}" -backend-config="workspace_key_prefix=${REPO_NAME}" -backend-config="role_arn=${AWS_TF_ROLE}"
+  #     - name: Terraform Init
+  #       id: init
+  #       run: terraform init -backend-config="bucket=${AWS_BUCKET_NAME}" -backend-config="key=${AWS_BUCKET_KEY_NAME}" -backend-config="region=${AWS_REGION}" -backend-config="workspace_key_prefix=${REPO_NAME}" -backend-config="role_arn=${AWS_TF_ROLE}"
 
-      - name: Terraform Workspaces
-        id: workspaces
-        run: |
-          chmod +x ../../.github/workflows/utils/workspaces.sh
-          source ../../.github/workflows/utils/workspaces.sh $GITHUB_BRANCH_NAME
+  #     - name: Terraform Workspaces
+  #       id: workspaces
+  #       run: |
+  #         chmod +x ../../.github/workflows/utils/workspaces.sh
+  #         source ../../.github/workflows/utils/workspaces.sh $GITHUB_BRANCH_NAME
 
-      - name: Terraform Validate
-        id: validate
-        run: terraform validate -no-color
+  #     - name: Terraform Validate
+  #       id: validate
+  #       run: terraform validate -no-color
 
-      - name: Terraform Variables
-        id: variables
-        run: |
-          echo "TF_VAR_repo=${REPO_NAME}" >> $GITHUB_ENV
-          echo "TF_VAR_environment=${ENV}" >> $GITHUB_ENV
-          echo "TF_VAR_branch=${GITHUB_BRANCH_NAME}" >> $GITHUB_ENV
+  #     - name: Terraform Variables
+  #       id: variables
+  #       run: |
+  #         echo "TF_VAR_repo=${REPO_NAME}" >> $GITHUB_ENV
+  #         echo "TF_VAR_environment=${ENV}" >> $GITHUB_ENV
+  #         echo "TF_VAR_branch=${GITHUB_BRANCH_NAME}" >> $GITHUB_ENV
 
-      - name: Terraform Plan
-        id: plan
-        run: terraform plan -no-color
-        continue-on-error: true
+  #     - name: Terraform Plan
+  #       id: plan
+  #       run: terraform plan -no-color
+  #       continue-on-error: true
 
-      - name: Terraform Plan Status
-        if: steps.plan.outcome == 'failure'
-        run: exit 1
+  #     - name: Terraform Plan Status
+  #       if: steps.plan.outcome == 'failure'
+  #       run: exit 1
 
-  apply:
-    needs: [build, plan]
-    runs-on: ubuntu-latest
-    defaults:
-      run:
-        shell: bash
-        working-directory: .aws/terraform
-    steps:
-      - name: Git checkout
-        uses: actions/checkout@v3
+  # apply:
+  #   needs: [build, plan]
+  #   runs-on: ubuntu-latest
+  #   defaults:
+  #     run:
+  #       shell: bash
+  #       working-directory: .aws/terraform
+  #   steps:
+  #     - name: Git checkout
+  #       uses: actions/checkout@v3
 
-      - name: Set ENV variables
-        run: |
-          echo "REPO_NAME=${GITHUB_REPOSITORY#$GITHUB_REPOSITORY_OWNER/}" >> $GITHUB_ENV
-          if [[ $GITHUB_REF == refs/heads/main ]]; then
-            echo "Using QA Role"
-            echo "AWS_ROLE=${{ secrets.AWS_QA_ROLE }}" >> $GITHUB_ENV
-            echo "ENV=qa" >> $GITHUB_ENV
-          elif [[ $GITHUB_REF == refs/heads/develop ]]; then
-            echo "Using Test Role"
-            echo "AWS_ROLE=${{ secrets.AWS_TEST_ROLE }}" >> $GITHUB_ENV
-            echo "ENV=test" >> $GITHUB_ENV
-          elif [[ $GITHUB_REF == refs/heads/feature/* || $GITHUB_REF == refs/heads/bugfix/* || $GITHUB_REF == refs/heads/task/* || $GITHUB_REF == refs/heads/hotfix/* ]]; then
-            echo "Using Dev Role"
-            echo "AWS_ROLE=${{ secrets.AWS_DEV_ROLE }}" >> $GITHUB_ENV
-            echo "ENV=dev" >> $GITHUB_ENV
-          else
-            echo "Invalid branch name. Stopping the action."
-            exit 1
-          fi
+  #     - name: Set ENV variables
+  #       run: |
+  #         echo "REPO_NAME=${GITHUB_REPOSITORY#$GITHUB_REPOSITORY_OWNER/}" >> $GITHUB_ENV
+  #         if [[ $GITHUB_REF == refs/heads/main ]]; then
+  #           echo "Using QA Role"
+  #           echo "AWS_ROLE=${{ secrets.AWS_QA_ROLE }}" >> $GITHUB_ENV
+  #           echo "ENV=qa" >> $GITHUB_ENV
+  #         elif [[ $GITHUB_REF == refs/heads/develop ]]; then
+  #           echo "Using Test Role"
+  #           echo "AWS_ROLE=${{ secrets.AWS_TEST_ROLE }}" >> $GITHUB_ENV
+  #           echo "ENV=test" >> $GITHUB_ENV
+  #         elif [[ $GITHUB_REF == refs/heads/feature/* || $GITHUB_REF == refs/heads/bugfix/* || $GITHUB_REF == refs/heads/task/* || $GITHUB_REF == refs/heads/hotfix/* ]]; then
+  #           echo "Using Dev Role"
+  #           echo "AWS_ROLE=${{ secrets.AWS_DEV_ROLE }}" >> $GITHUB_ENV
+  #           echo "ENV=dev" >> $GITHUB_ENV
+  #         else
+  #           echo "Invalid branch name. Stopping the action."
+  #           exit 1
+  #         fi
 
-      - name: Configure AWS credentials from AWS account
-        uses: aws-actions/configure-aws-credentials@v1
-        with:
-          role-to-assume: ${{ env.AWS_ROLE }}
-          aws-region: ${{ secrets.AWS_REGION }}
-          role-session-name: GitHub-OIDC-TERRAFORM
+  #     - name: Configure AWS credentials from AWS account
+  #       uses: aws-actions/configure-aws-credentials@v1
+  #       with:
+  #         role-to-assume: ${{ env.AWS_ROLE }}
+  #         aws-region: ${{ secrets.AWS_REGION }}
+  #         role-session-name: GitHub-OIDC-TERRAFORM
 
-      - name: Setup Terraform
-        uses: hashicorp/setup-terraform@v2
-        with:
-          terraform_version: 1.2.5
+  #     - name: Setup Terraform
+  #       uses: hashicorp/setup-terraform@v2
+  #       with:
+  #         terraform_version: 1.2.5
 
-      - name: Terraform Init
-        id: init
-        env:
-          AWS_BUCKET_NAME: ${{ secrets.AWS_BUCKET_NAME }}
-          AWS_BUCKET_KEY_NAME: ${{ secrets.AWS_BUCKET_KEY_NAME }}
-        run: terraform init -backend-config="bucket=${AWS_BUCKET_NAME}" -backend-config="key=${AWS_BUCKET_KEY_NAME}" -backend-config="region=${AWS_REGION}" -backend-config="workspace_key_prefix=${REPO_NAME}" -backend-config="role_arn=${AWS_TF_ROLE}"
+  #     - name: Terraform Init
+  #       id: init
+  #       env:
+  #         AWS_BUCKET_NAME: ${{ secrets.AWS_BUCKET_NAME }}
+  #         AWS_BUCKET_KEY_NAME: ${{ secrets.AWS_BUCKET_KEY_NAME }}
+  #       run: terraform init -backend-config="bucket=${AWS_BUCKET_NAME}" -backend-config="key=${AWS_BUCKET_KEY_NAME}" -backend-config="region=${AWS_REGION}" -backend-config="workspace_key_prefix=${REPO_NAME}" -backend-config="role_arn=${AWS_TF_ROLE}"
 
-      - name: Terraform Workspaces
-        id: workspaces
-        env:
-          GITHUB_BRANCH_NAME: ${{ github.ref_name }}
-        run: |
-          chmod +x ../../.github/workflows/utils/workspaces.sh
-          source ../../.github/workflows/utils/workspaces.sh $GITHUB_BRANCH_NAME
+  #     - name: Terraform Workspaces
+  #       id: workspaces
+  #       env:
+  #         GITHUB_BRANCH_NAME: ${{ github.ref_name }}
+  #       run: |
+  #         chmod +x ../../.github/workflows/utils/workspaces.sh
+  #         source ../../.github/workflows/utils/workspaces.sh $GITHUB_BRANCH_NAME
 
-      - name: Terraform Validate
-        id: validate
-        run: terraform validate -no-color
+  #     - name: Terraform Validate
+  #       id: validate
+  #       run: terraform validate -no-color
 
-      - name: Terraform Variables
-        id: variables
-        run: |
-          echo "TF_VAR_repo=${REPO_NAME}" >> $GITHUB_ENV
-          echo "TF_VAR_environment=${ENV}" >> $GITHUB_ENV
-          echo "TF_VAR_branch=${GITHUB_BRANCH_NAME}" >> $GITHUB_ENV
+  #     - name: Terraform Variables
+  #       id: variables
+  #       run: |
+  #         echo "TF_VAR_repo=${REPO_NAME}" >> $GITHUB_ENV
+  #         echo "TF_VAR_environment=${ENV}" >> $GITHUB_ENV
+  #         echo "TF_VAR_branch=${GITHUB_BRANCH_NAME}" >> $GITHUB_ENV
 
-      - name: Terraform Apply
-        run: terraform apply -auto-approve -input=false
+  #     - name: Terraform Apply
+  #       run: terraform apply -auto-approve -input=false
