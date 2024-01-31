@@ -18,7 +18,41 @@ env:
   GITHUB_BRANCH_NAME: ${{ github.ref_name }}
 
 jobs:
+  build:
+      # if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+      needs: plan
+      runs-on: ubuntu-latest
+      defaults:
+        run:
+          shell: bash
+          working-directory: src/backend
+      steps:
+        - name: Git checkout
+          uses: actions/checkout@v3
+
+        - name: Setup python
+          uses: actions/setup-python@v4
+          with:
+            python-version: '3.8'
+
+        - name: Install python dependencies
+          run: pip install -r ./auth/requirements.txt -t ./auth
+
+        - name: Zip python dependencies
+          run: zip -q -r -g ./auth/auth.zip auth; ls -lh
+
+        - name: Add source code to python dependencies zip
+          run: zip -q -g auth.zip ./auth/auth.py; ls -lh
+
+        - name: Upload artifact for deployment job
+          uses: actions/upload-artifact@v2
+          with:
+            name: python_deployment
+            path: src/backend/auth/auth.zip
+            if-no-files-found: error
+            
   plan:
+    needs: build
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -96,7 +130,7 @@ jobs:
         run: exit 1
 
   apply:
-    needs: plan
+    needs: [build, plan]
     runs-on: ubuntu-latest
     defaults:
       run:
