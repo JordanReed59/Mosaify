@@ -88,52 +88,53 @@ jobs:
           name: python_deployment
           path: .aws/terraform/zips
 
-  #     - name: Configure AWS credentials from AWS account
-  #       uses: aws-actions/configure-aws-credentials@v1
-  #       with:
-  #         role-to-assume: ${{ env.AWS_ROLE }}
-  #         aws-region: ${{ env.AWS_REGION }}
-  #         role-session-name: GitHub-OIDC-TERRAFORM
+      - name: Configure AWS credentials from AWS account
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          role-to-assume: ${{ env.AWS_ROLE }}
+          aws-region: ${{ env.AWS_REGION }}
+          role-session-name: GitHub-OIDC-TERRAFORM
 
-  #     - name: Setup Terraform
-  #       uses: hashicorp/setup-terraform@v2
-  #       with:
-  #         terraform_version: 1.2.5
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v2
+        with:
+          terraform_version: 1.2.5
 
-  #     - name: Terraform fmt
-  #       id: fmt
-  #       run: terraform fmt -check
-  #       continue-on-error: true
+      - name: Terraform fmt
+        id: fmt
+        run: terraform fmt -check
+        continue-on-error: true
 
-  #     - name: Terraform Init
-  #       id: init
-  #       run: terraform init -backend-config="bucket=${AWS_BUCKET_NAME}" -backend-config="key=${AWS_BUCKET_KEY_NAME}" -backend-config="region=${AWS_REGION}" -backend-config="workspace_key_prefix=${REPO_NAME}" -backend-config="role_arn=${AWS_TF_ROLE}"
+      - name: Terraform Init
+        id: init
+        run: terraform init -backend-config="bucket=${AWS_BUCKET_NAME}" -backend-config="key=${AWS_BUCKET_KEY_NAME}" -backend-config="region=${AWS_REGION}" -backend-config="workspace_key_prefix=${REPO_NAME}" -backend-config="role_arn=${AWS_TF_ROLE}"
 
-  #     - name: Terraform Workspaces
-  #       id: workspaces
-  #       run: |
-  #         chmod +x ../../.github/workflows/utils/workspaces.sh
-  #         source ../../.github/workflows/utils/workspaces.sh $GITHUB_BRANCH_NAME
+      - name: Terraform Workspaces
+        id: workspaces
+        run: |
+          chmod +x ../../.github/workflows/utils/workspaces.sh
+          source ../../.github/workflows/utils/workspaces.sh $GITHUB_BRANCH_NAME
 
-  #     - name: Terraform Validate
-  #       id: validate
-  #       run: terraform validate -no-color
+      - name: Terraform Validate
+        id: validate
+        run: terraform validate -no-color
 
-  #     - name: Terraform Variables
-  #       id: variables
-  #       run: |
-  #         echo "TF_VAR_repo=${REPO_NAME}" >> $GITHUB_ENV
-  #         echo "TF_VAR_environment=${ENV}" >> $GITHUB_ENV
-  #         echo "TF_VAR_branch=${GITHUB_BRANCH_NAME}" >> $GITHUB_ENV
+      - name: Terraform Variables
+        id: variables
+        run: |
+          echo "TF_VAR_repo=${REPO_NAME}" >> $GITHUB_ENV
+          echo "TF_VAR_environment=${ENV}" >> $GITHUB_ENV
+          echo "TF_VAR_branch=${GITHUB_BRANCH_NAME}" >> $GITHUB_ENV
+          echo "TF_VAR_region=${GITHUB_BRANCH_NAME}" >> $GITHUB_ENV
 
-  #     - name: Terraform Plan
-  #       id: plan
-  #       run: terraform plan -no-color
-  #       continue-on-error: true
+      - name: Terraform Plan
+        id: plan
+        run: terraform plan -no-color
+        continue-on-error: true
 
-  #     - name: Terraform Plan Status
-  #       if: steps.plan.outcome == 'failure'
-  #       run: exit 1
+      - name: Terraform Plan Status
+        if: steps.plan.outcome == 'failure'
+        run: exit 1
 
   # apply:
   #   needs: [build, plan]
@@ -203,6 +204,7 @@ jobs:
   #         echo "TF_VAR_repo=${REPO_NAME}" >> $GITHUB_ENV
   #         echo "TF_VAR_environment=${ENV}" >> $GITHUB_ENV
   #         echo "TF_VAR_branch=${GITHUB_BRANCH_NAME}" >> $GITHUB_ENV
+  #         echo "TF_VAR_region=${GITHUB_BRANCH_NAME}" >> $GITHUB_ENV
 
   #     - name: Terraform Apply
   #       run: terraform apply -auto-approve -input=false
