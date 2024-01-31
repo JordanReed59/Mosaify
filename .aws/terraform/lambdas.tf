@@ -6,7 +6,7 @@ resource "aws_lambda_function" "auth_lambda" {
   filename      = "${path.module}/zips/auth.zip"
   function_name = "${module.namespace.namespace}-auth"
   handler       = "auth.lambda_handler"
-  role          = aws_iam_role.lambda_role.arn
+  role          = aws_iam_role.auth_lambda_role.arn
   runtime       = "python3.12"
   memory_size   = 128
   source_code_hash = filebase64sha256("${path.module}/zips/auth.zip")
@@ -75,7 +75,7 @@ resource "aws_lambda_function" "url_lambda" {
   filename      = "${path.module}/zips/auth.zip"
   function_name = "${module.namespace.namespace}-url"
   handler       = "url.lambda_handler"
-  role          = aws_iam_role.lambda_role.arn
+  role          = aws_iam_role.url_lambda_role.arn
   runtime       = "python3.12"
   memory_size   = 128
   source_code_hash = filebase64sha256("${path.module}/zips/url.zip")
