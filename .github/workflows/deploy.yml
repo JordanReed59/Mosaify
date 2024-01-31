@@ -39,11 +39,10 @@ jobs:
         - name: Zip python dependencies
           run: |
             mkdir -p zips
-            touch ./zips/test.txt
-            zip -q -r -g ./zips/auth.zip ./auth_python; ls -lh zips
+            zip -q -r -g ./zips/auth.zip ./auth_python
 
         - name: Add source code to python dependencies zip
-          run: zip -q -g ./zips/auth.zip ./auth/auth.py; ls -lh zips
+          run: zip -q -g ./zips/auth.zip ./auth/auth.py
 
         - name: Upload artifact for deployment job
           uses: actions/upload-artifact@v2
@@ -88,9 +87,6 @@ jobs:
         with:
           name: python_deployment
           path: .aws/terraform/zips
-
-      - name: View directory
-        run: ls zips
 
   #     - name: Configure AWS credentials from AWS account
   #       uses: aws-actions/configure-aws-credentials@v1
