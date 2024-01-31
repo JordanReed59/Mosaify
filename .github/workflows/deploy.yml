@@ -37,16 +37,16 @@ jobs:
           run: pip install --quiet -r ./auth/requirements.txt -t auth_python
 
         - name: Zip python dependencies
-          run: zip -q -r -g ./auth/auth.zip ./auth_python; ls -lh auth
+          run: zip -q -r -g ./zips/auth.zip ./auth_python; ls -lh zips
 
         - name: Add source code to python dependencies zip
-          run: zip -q -g ./auth/auth.zip ./auth/auth.py; ls -lh auth
+          run: zip -q -g ./zips/auth.zip ./auth/auth.py; ls -lh zips
 
         - name: Upload artifact for deployment job
           uses: actions/upload-artifact@v2
           with:
             name: python_deployment
-            path: src/backend/auth/auth.zip
+            path: src/backend/zips
             if-no-files-found: error
             
   # plan:
