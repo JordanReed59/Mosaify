@@ -62,5 +62,13 @@ jobs:
         id: validate
         run: terraform validate -no-color
 
+      - name: Terraform Variables
+        id: variables
+        run: |
+          echo "TF_VAR_repo=${REPO_NAME}" >> $GITHUB_ENV
+          echo "TF_VAR_environment=${ENV}" >> $GITHUB_ENV
+          echo "TF_VAR_branch=${GITHUB_BRANCH_NAME}" >> $GITHUB_ENV
+          echo "TF_VAR_region=${AWS_REGION}" >> $GITHUB_ENV
+
       - name: Terraform Apply
         run: terraform apply -auto-approve -input=false
