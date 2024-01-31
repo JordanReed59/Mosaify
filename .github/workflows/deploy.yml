@@ -39,6 +39,7 @@ jobs:
         - name: Zip python dependencies
           run: |
             mkdir -p zips
+            touch .zips/test.txt
             zip -q -r -g ./zips/auth.zip ./auth_python; ls -lh zips
 
         - name: Add source code to python dependencies zip
@@ -86,7 +87,7 @@ jobs:
         uses: actions/download-artifact@v2
         with:
           name: python_deployment
-          path: .aws/terraform/
+          path: .aws/terraform/zips
 
       - name: View directory
         run: ls
