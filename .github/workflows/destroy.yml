@@ -57,7 +57,9 @@ jobs:
             name: python_deployment
             path: src/backend/zips
             if-no-files-found: error
+
   destroy:
+    needs: build
     runs-on: ubuntu-latest
     defaults:
       run:
