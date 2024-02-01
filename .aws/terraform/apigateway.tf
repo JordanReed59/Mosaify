@@ -74,6 +74,7 @@ resource "aws_lambda_permission" "apigw_auth_lambda" {
 # }
 ################ URL resource ################
 
+################ API Deployment ################
 resource "aws_api_gateway_deployment" "deploy_api" {
   rest_api_id = "${aws_api_gateway_rest_api.gateway.id}"
   depends_on = [
