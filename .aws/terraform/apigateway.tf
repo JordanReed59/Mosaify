@@ -25,13 +25,13 @@ resource "aws_api_gateway_integration" "option_post_lambda" {
 
   integration_http_method = "POST"
   type                    = "AWS_PROXY"
-  uri                     = "arn:aws:apigateway:${var.region}:lambda:path/2015-03-31/functions/arn:aws:lambda:${var.region}:${local.account_id}:function:mosaify-dev-feature-mos-2-option/invocations"
+  uri                     = "arn:aws:apigateway:${var.region}:lambda:path/2015-03-31/functions/arn:aws:lambda:${var.region}:${local.account_id}:${module.namespace.namespace}-option/invocations"
 }
 
 resource "aws_lambda_permission" "apigw_aoption_lambda" {
   statement_id  = "AllowExecutionFromAPIGateway"
   action        = "lambda:InvokeFunction"
-  function_name = "mosaify-dev-feature-mos-2-option"
+  function_name = "${module.namespace.namespace}-option"
   principal     = "apigateway.amazonaws.com"
 
   # More: http://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-control-access-using-iam-policies-to-invoke-api.html
@@ -60,7 +60,7 @@ resource "aws_api_gateway_integration" "auth_post_lambda" {
 
   integration_http_method = "POST"
   type                    = "AWS_PROXY"
-  uri                     = "arn:aws:apigateway:${var.region}:lambda:path/2015-03-31/functions/arn:aws:lambda:${var.region}:${local.account_id}:function:mosaify-dev-feature-mos-2-auth/invocations"
+  uri                     = "arn:aws:apigateway:${var.region}:lambda:path/2015-03-31/functions/arn:aws:lambda:${var.region}:${local.account_id}:function:${module.namespace.namespace}-auth/invocations"
 }
 
 resource "aws_lambda_permission" "apigw_auth_lambda" {
@@ -95,7 +95,7 @@ resource "aws_lambda_permission" "apigw_auth_lambda" {
 
 #   integration_http_method = "POST"
 #   type                    = "AWS_PROXY"
-#   uri                     = "arn:aws:apigateway:${var.region}:lambda:path/2015-03-31/functions/arn:aws:lambda:${var.region}:${local.account_id}:function:mosaify-dev-feature-mos-2-auth/invocations"
+#   uri                     = "arn:aws:apigateway:${var.region}:lambda:path/2015-03-31/functions/arn:aws:lambda:${var.region}:${local.account_id}:function:${module.namespace.namespace}-url/invocations"
 # }
 
 # resource "aws_lambda_permission" "apigw_lambda" {
