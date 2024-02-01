@@ -5,15 +5,9 @@ resource "aws_api_gateway_rest_api" "gateway" {
 }
 
 ################ Option resource ################
-resource "aws_api_gateway_resource" "mosaify_option_method_resource" {
-  rest_api_id = "${aws_api_gateway_rest_api.gateway.id}"
-  parent_id   = "${aws_api_gateway_rest_api.gateway.root_resource_id}"
-  path_part   = ""
-}
-
 resource "aws_api_gateway_method" "option_post_method" {
   rest_api_id   = aws_api_gateway_rest_api.gateway.id
-  resource_id   = aws_api_gateway_resource.mosaify_option_method_resource.id
+  resource_id   = aws_api_gateway_rest_api.gateway.root_resource_id
   http_method   = "OPTIONS"
   authorization = "NONE"
 }
