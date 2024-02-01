@@ -24,7 +24,7 @@ resource "aws_api_gateway_integration" "post_lambda" {
 
   integration_http_method = "POST"
   type                    = "AWS_PROXY"
-  uri                     = "arn:aws:apigateway:us-east-1:lambda:path/2015-03-31/functions/arn:aws:lambda:us-east-1:992382358856:function:***-dev-feature-mos-2-auth/invocations"
+  uri                     = "arn:aws:apigateway:us-east-1:lambda:path/2015-03-31/functions/arn:aws:lambda:us-east-1:992382358856:function:mosaify-dev-feature-mos-2-auth/invocations"
 }
 
 resource "aws_api_gateway_deployment" "deploy_api" {
