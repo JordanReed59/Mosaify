@@ -202,3 +202,63 @@ data "aws_iam_policy_document" "mosaify_role_policy" {
   }
 }
 ############### End Mosaify Lambda ###############
+
+############### Begin Option Lambda ###############
+# lambda config
+resource "aws_lambda_function" "option_lambda" {
+  # If the file is not in the current working directory you will need to include a
+  # path.module in the filename.
+  filename      = "${path.module}/zips/option.zip"
+  function_name = "${module.namespace.namespace}-option"
+  handler       = "option.lambda_handler"
+  role          = aws_iam_role.option_lambda_role.arn
+  runtime       = "python3.12"
+  memory_size   = 128
+  source_code_hash = filebase64sha256("${path.module}/zips/option.zip")
+}
+
+# lambda role
+resource "aws_iam_role" "option_lambda_role" {
+  name   = "${module.namespace.namespace}-option-role"
+  assume_role_policy = data.aws_iam_policy_document.option_lambda_role_trust.json 
+}
+
+data "aws_iam_policy_document" "option_lambda_role_trust" {
+  statement {
+    sid     = ""
+    effect  = "Allow"
+    actions = ["sts:AssumeRole"]
+
+    principals {
+      type        = "Service"
+      identifiers = ["lambda.amazonaws.com"]
+    }
+  }
+}
+
+resource "aws_iam_role_policy_attachment" "_attach_iam_policy_to_iam_optionl_role" {
+  role        = aws_iam_role.option_lambda_role.name
+  policy_arn  = aws_iam_policy.iam_policy_for_option_lambda.arn
+}
+
+resource "aws_iam_policy" "iam_policy_for_option_lambda" {
+  name         = "${module.namespace.namespace}-option-role-policy"
+  description  = "AWS IAM Policy for Mosaify option lambda"
+  policy       = data.aws_iam_policy_document.option_role_policy.json
+}
+
+
+data "aws_iam_policy_document" "option_role_policy" {
+  statement {
+    sid       = ""
+    effect    = "Allow"
+    resources = ["arn:aws:logs:*:*:*"]
+
+    actions = [
+      "logs:CreateLogGroup",
+      "logs:CreateLogStream",
+      "logs:PutLogEvents",
+    ]
+  }
+}
+############### End Option Lambda ###############

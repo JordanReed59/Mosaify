@@ -34,6 +34,7 @@ jobs:
             pip install --quiet -r ./auth/requirements.txt -t auth_python
             pip install --quiet -r ./url/requirements.txt -t url_python
             pip install --quiet -r ./mosaify/requirements.txt -t mosaify_python
+            pip install --quiet -r ./option/requirements.txt -t option_python
 
         - name: Zip python dependencies
           run: |
@@ -46,6 +47,9 @@ jobs:
             cd ..
             cd mosaify_python
             zip -q -r -g ../zips/mosaify.zip .
+            cd ..
+            cd option_python
+            zip -q -r -g ../zips/option.zip .
 
         - name: Add source code to python dependencies zip
           run: |
@@ -56,7 +60,10 @@ jobs:
             zip -q -g ../zips/url.zip url.py
             cd ..
             cd ./url
-            zip -q -g ../zips/url.zip url.py
+            zip -q -g ../zips/url.mosaify mosaify.py
+            cd ..
+            cd ./option
+            zip -q -g ../zips/option.zip option.py
 
         - name: Upload artifact for deployment job
           uses: actions/upload-artifact@v2
