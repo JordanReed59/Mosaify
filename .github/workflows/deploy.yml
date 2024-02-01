@@ -60,7 +60,7 @@ jobs:
             zip -q -g ../zips/url.zip url.py
             cd ..
             cd ./url
-            zip -q -g ../zips/url.zip url.py
+            zip -q -g ../zips/mosaify.zip url.py
 
         - name: Upload artifact for deployment job
           uses: actions/upload-artifact@v2
