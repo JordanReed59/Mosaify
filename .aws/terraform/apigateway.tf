@@ -4,30 +4,31 @@ resource "aws_api_gateway_rest_api" "gateway" {
   description = "Terraform Serverless API Gateway for Mosaify"
 }
 
-resource "aws_api_gateway_resource" "mosaify_method_resource" {
+################ Auth resource ################
+resource "aws_api_gateway_resource" "mosaify_auth_method_resource" {
   rest_api_id = "${aws_api_gateway_rest_api.gateway.id}"
   parent_id   = "${aws_api_gateway_rest_api.gateway.root_resource_id}"
   path_part   = "auth"
 }
 
-resource "aws_api_gateway_method" "post_method" {
+resource "aws_api_gateway_method" "auth_post_method" {
   rest_api_id   = aws_api_gateway_rest_api.gateway.id
-  resource_id   = aws_api_gateway_resource.mosaify_method_resource.id
+  resource_id   = aws_api_gateway_resource.mosaify_auth_method_resource.id
   http_method   = "POST"
   authorization = "NONE"
 }
 
-resource "aws_api_gateway_integration" "post_lambda" {
+resource "aws_api_gateway_integration" "auth_post_lambda" {
   rest_api_id = "${aws_api_gateway_rest_api.gateway.id}"
-  resource_id = "${aws_api_gateway_method.post_method.resource_id}"
-  http_method = "${aws_api_gateway_method.post_method.http_method}"
+  resource_id = "${aws_api_gateway_method.auth_post_method.resource_id}"
+  http_method = "${aws_api_gateway_method.auth_post_method.http_method}"
 
   integration_http_method = "POST"
   type                    = "AWS_PROXY"
   uri                     = "arn:aws:apigateway:${var.region}:lambda:path/2015-03-31/functions/arn:aws:lambda:${var.region}:${local.account_id}:function:mosaify-dev-feature-mos-2-auth/invocations"
 }
 
-resource "aws_lambda_permission" "apigw_lambda" {
+resource "aws_lambda_permission" "apigw_auth_lambda" {
   statement_id  = "AllowExecutionFromAPIGateway"
   action        = "lambda:InvokeFunction"
   function_name = "mosaify-dev-feature-mos-2-auth"
@@ -36,20 +37,56 @@ resource "aws_lambda_permission" "apigw_lambda" {
   # More: http://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-control-access-using-iam-policies-to-invoke-api.html
   source_arn = "arn:aws:execute-api:${var.region}:${local.account_id}:${aws_api_gateway_rest_api.gateway.id}/*/${aws_api_gateway_method.post_method.http_method}${aws_api_gateway_resource.mosaify_method_resource.path}"
 }
+################ Auth resource ################
+
+################ URL resource ################
+# resource "aws_api_gateway_resource" "mosaify_method_resource" {
+#   rest_api_id = "${aws_api_gateway_rest_api.gateway.id}"
+#   parent_id   = "${aws_api_gateway_rest_api.gateway.root_resource_id}"
+#   path_part   = "auth"
+# }
+
+# resource "aws_api_gateway_method" "post_method" {
+#   rest_api_id   = aws_api_gateway_rest_api.gateway.id
+#   resource_id   = aws_api_gateway_resource.mosaify_method_resource.id
+#   http_method   = "POST"
+#   authorization = "NONE"
+# }
+
+# resource "aws_api_gateway_integration" "post_lambda" {
+#   rest_api_id = "${aws_api_gateway_rest_api.gateway.id}"
+#   resource_id = "${aws_api_gateway_method.post_method.resource_id}"
+#   http_method = "${aws_api_gateway_method.post_method.http_method}"
+
+#   integration_http_method = "POST"
+#   type                    = "AWS_PROXY"
+#   uri                     = "arn:aws:apigateway:${var.region}:lambda:path/2015-03-31/functions/arn:aws:lambda:${var.region}:${local.account_id}:function:mosaify-dev-feature-mos-2-auth/invocations"
+# }
+
+# resource "aws_lambda_permission" "apigw_lambda" {
+#   statement_id  = "AllowExecutionFromAPIGateway"
+#   action        = "lambda:InvokeFunction"
+#   function_name = "mosaify-dev-feature-mos-2-auth"
+#   principal     = "apigateway.amazonaws.com"
+
+#   # More: http://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-control-access-using-iam-policies-to-invoke-api.html
+#   source_arn = "arn:aws:execute-api:${var.region}:${local.account_id}:${aws_api_gateway_rest_api.gateway.id}/*/${aws_api_gateway_method.post_method.http_method}${aws_api_gateway_resource.mosaify_method_resource.path}"
+# }
+################ URL resource ################
 
 resource "aws_api_gateway_deployment" "deploy_api" {
   rest_api_id = "${aws_api_gateway_rest_api.gateway.id}"
   depends_on = [
-    aws_api_gateway_resource.mosaify_method_resource,
-    aws_api_gateway_integration.post_lambda,
-    aws_api_gateway_method.post_method
+    aws_api_gateway_resource.mosaify_auth_method_resource,
+    aws_api_gateway_integration.auth_post_lambda,
+    aws_api_gateway_method.auth_post_method
   ]
 
   triggers = {
     redeployment = sha1(jsonencode([
-      aws_api_gateway_resource.mosaify_method_resource.id,
-      aws_api_gateway_integration.post_lambda.id,
-      aws_api_gateway_method.post_method.id
+      aws_api_gateway_resource.mosaify_auth_method_resource.id,
+      aws_api_gateway_integration.auth_post_lambda.id,
+      aws_api_gateway_method.auth_post_method.id
     ]))
   }
 }
