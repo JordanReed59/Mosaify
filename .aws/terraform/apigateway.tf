@@ -19,13 +19,13 @@ resource "aws_api_gateway_integration" "option_post_lambda" {
 
   integration_http_method = "${aws_api_gateway_method.option_post_method.http_method}"
   type                    = "AWS"
-  uri                     = "arn:aws:apigateway:${var.region}:lambda:path/2015-03-31/functions/arn:aws:lambda:${var.region}:${local.account_id}:${module.namespace.namespace}-option/invocations"
+  uri                     = "arn:aws:apigateway:${var.region}:lambda:path/2015-03-31/functions/arn:aws:lambda:${var.region}:${local.account_id}:mosaify-dev-feature-mos-2-option/invocations"
 }
 
 resource "aws_lambda_permission" "apigw_option_lambda" {
   statement_id  = "AllowExecutionFromAPIGateway"
   action        = "lambda:InvokeFunction"
-  function_name = "${module.namespace.namespace}-option"
+  function_name = "mosaify-dev-feature-mos-2-option"
   principal     = "apigateway.amazonaws.com"
 
   # More: http://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-control-access-using-iam-policies-to-invoke-api.html
@@ -54,7 +54,7 @@ resource "aws_api_gateway_integration" "auth_post_lambda" {
 
   integration_http_method = "POST"
   type                    = "AWS_PROXY"
-  uri                     = "arn:aws:apigateway:${var.region}:lambda:path/2015-03-31/functions/arn:aws:lambda:${var.region}:${local.account_id}:function:${module.namespace.namespace}-auth/invocations"
+  uri                     = "arn:aws:apigateway:${var.region}:lambda:path/2015-03-31/functions/arn:aws:lambda:${var.region}:${local.account_id}:function:mosaify-dev-feature-mos-2-auth/invocations"
 }
 
 resource "aws_lambda_permission" "apigw_auth_lambda" {
@@ -89,7 +89,7 @@ resource "aws_lambda_permission" "apigw_auth_lambda" {
 
 #   integration_http_method = "POST"
 #   type                    = "AWS_PROXY"
-#   uri                     = "arn:aws:apigateway:${var.region}:lambda:path/2015-03-31/functions/arn:aws:lambda:${var.region}:${local.account_id}:function:${module.namespace.namespace}-url/invocations"
+#   uri                     = "arn:aws:apigateway:${var.region}:lambda:path/2015-03-31/functions/arn:aws:lambda:${var.region}:${local.account_id}:function:mosaify-dev-feature-mos-2-url/invocations"
 # }
 
 # resource "aws_lambda_permission" "apigw_lambda" {
