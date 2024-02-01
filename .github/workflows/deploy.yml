@@ -37,6 +37,7 @@ jobs:
           run: |
             pip install --quiet -r ./auth/requirements.txt -t auth_python
             pip install --quiet -r ./url/requirements.txt -t url_python
+            pip install --quiet -r ./mosaify/requirements.txt -t mosaify_python
 
         - name: Zip python dependencies
           run: |
@@ -46,11 +47,17 @@ jobs:
             cd ..
             cd url_python
             zip -q -r -g ../zips/url.zip .
+            cd ..
+            cd mosaify_python
+            zip -q -r -g ../zips/mosaify.zip .
 
         - name: Add source code to python dependencies zip
           run: |
             cd ./auth
             zip -q -g ../zips/auth.zip auth.py
+            cd ..
+            cd ./url
+            zip -q -g ../zips/url.zip url.py
             cd ..
             cd ./url
             zip -q -g ../zips/url.zip url.py

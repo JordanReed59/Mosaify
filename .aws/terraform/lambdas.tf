@@ -67,6 +67,7 @@ data "aws_iam_policy_document" "auth_role_policy" {
 }
 ############### End Access Token Lambda ###############
 
+
 ############### Begin Pre-signed URL Lambda ###############
 # lambda config
 resource "aws_lambda_function" "url_lambda" {
@@ -134,4 +135,70 @@ data "aws_iam_policy_document" "url_role_policy" {
 }
 ############### End Pre-signed URL Lambda ###############
 
-#Mosaify lambda
+
+############### Begin Mosaify Lambda ###############
+# lambda config
+resource "aws_lambda_function" "mosaify_lambda" {
+  # If the file is not in the current working directory you will need to include a
+  # path.module in the filename.
+  filename      = "${path.module}/zips/mosaify.zip"
+  function_name = "${module.namespace.namespace}-mosaify"
+  handler       = "mosaify.lambda_handler"
+  role          = aws_iam_role.mosaify_lambda_role.arn
+  runtime       = "python3.12"
+  memory_size   = 128
+  source_code_hash = filebase64sha256("${path.module}/zips/mosaify.zip")
+#   depends_on = [aws_iam_role_policy_attachment.attach_iam_policy_to_iam_role]
+  environment {
+    variables = {
+      BUCKET_NAME = "foobar"
+    }
+  }
+  
+}
+
+# lambda role
+resource "aws_iam_role" "mosaify_lambda_role" {
+  name   = "${module.namespace.namespace}-mosaify-role"
+  assume_role_policy = data.aws_iam_policy_document.mosaify_lambda_role_trust.json 
+}
+
+data "aws_iam_policy_document" "mosaify_lambda_role_trust" {
+  statement {
+    sid     = ""
+    effect  = "Allow"
+    actions = ["sts:AssumeRole"]
+
+    principals {
+      type        = "Service"
+      identifiers = ["lambda.amazonaws.com"]
+    }
+  }
+}
+
+resource "aws_iam_role_policy_attachment" "_attach_iam_policy_to_iam_mosaifyl_role" {
+  role        = aws_iam_role.mosaify_lambda_role.name
+  policy_arn  = aws_iam_policy.iam_policy_for_mosaify_lambda.arn
+}
+
+resource "aws_iam_policy" "iam_policy_for_mosaify_lambda" {
+  name         = "${module.namespace.namespace}-mosaify-role-policy"
+  description  = "AWS IAM Policy for Mosaify image processing lambda"
+  policy       = data.aws_iam_policy_document.mosaify_role_policy.json
+}
+
+
+data "aws_iam_policy_document" "mosaify_role_policy" {
+  statement {
+    sid       = ""
+    effect    = "Allow"
+    resources = ["arn:aws:logs:*:*:*"]
+
+    actions = [
+      "logs:CreateLogGroup",
+      "logs:CreateLogStream",
+      "logs:PutLogEvents",
+    ]
+  }
+}
+############### End Mosaify Lambda ###############
