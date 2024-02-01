@@ -1,0 +1,1 @@
+# add static site config
