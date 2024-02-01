@@ -90,7 +90,8 @@ def lambda_handler(event, context):
     response = {}
     response['statusCode'] = 200
     response['headers'] = {
-        'Content-Type': 'application/json; charset=utf-8'
+        'Content-Type': 'application/json; charset=utf-8',
+        'Access-Control-Allow-Origin': 'http://localhost:3000/'
     }
     response['body'] = json.dumps({'msg' : "Hello from auth lambda"})
 
