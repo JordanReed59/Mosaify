@@ -4,6 +4,7 @@ import os
 
 
 def lambda_handler(event, context):
+    print(event)
     # body = json.loads(event['body'])
     # key = body['key']
 

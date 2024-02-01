@@ -82,6 +82,7 @@ def get_access_token(authorization_code):
         }
 
 def lambda_handler(event, context):
+    print(event)
     # body = json.loads(event['body'])
     # authorization_code = body['authorization_code']
     # print(authorization_code)

@@ -20,6 +20,7 @@ def generate_presigned_url(key, expires_in=300):
     return url
 
 def lambda_handler(event, context):
+    print(event)
     # body = json.loads(event['body'])
     # key = body['key']
 
