@@ -1,7 +1,7 @@
 # add static site config
 ########## begin s3 static site bucket configuration ##########
 resource "aws_s3_bucket" "static_site_bucket" {
-  bucket = "mosaify-static-page"
+  bucket = "${module.namespace.namespace}-static-page"
   force_destroy = true
 }
 
