@@ -4,7 +4,7 @@ def lambda_handler(event, context):
     print(event)
 
     origin = "*"
-    if event["headers"]["origin"]:
+    if "origin" in event["headers"]:
         origin = event["headers"]["origin"]
     
     print(f"Request from: {origin}")
