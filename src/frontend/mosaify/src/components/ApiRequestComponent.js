@@ -10,6 +10,9 @@ const ApiRequestComponent = () => {
     clientId: "value3",
     redirectUri: "http://localhost:3000/"
   };
+  const headers = {
+    "Access-Control-Allow-Origin": "*"
+  };
 
   const fetchData = async () => {
     try {
