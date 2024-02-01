@@ -14,7 +14,7 @@ resource "aws_api_gateway_resource" "mosaify_option_method_resource" {
 resource "aws_api_gateway_method" "option_post_method" {
   rest_api_id   = aws_api_gateway_rest_api.gateway.id
   resource_id   = aws_api_gateway_resource.mosaify_option_method_resource.id
-  http_method   = "OPTION"
+  http_method   = "OPTIONS"
   authorization = "NONE"
 }
 
