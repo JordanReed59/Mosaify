@@ -24,7 +24,17 @@ resource "aws_api_gateway_integration" "post_lambda" {
 
   integration_http_method = "POST"
   type                    = "AWS_PROXY"
-  uri                     = "arn:aws:apigateway:us-east-1:lambda:path/2015-03-31/functions/arn:aws:lambda:us-east-1:992382358856:function:mosaify-dev-feature-mos-2-auth/invocations"
+  uri                     = "arn:aws:apigateway:${var.region}:lambda:path/2015-03-31/functions/arn:aws:lambda:${var.region}:${local.account_id}:function:mosaify-dev-feature-mos-2-auth/invocations"
+}
+
+resource "aws_lambda_permission" "apigw_lambda" {
+  statement_id  = "AllowExecutionFromAPIGateway"
+  action        = "lambda:InvokeFunction"
+  function_name = "mosaify-dev-feature-mos-2-auth"
+  principal     = "apigateway.amazonaws.com"
+
+  # More: http://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-control-access-using-iam-policies-to-invoke-api.html
+  source_arn = "arn:aws:execute-api:${var.region}:${local.account_id}:${aws_api_gateway_rest_api.gateway.id}/*/${aws_api_gateway_method.post_method.http_method}${aws_api_gateway_resource.mosaify_method_resource.path}"
 }
 
 resource "aws_api_gateway_deployment" "deploy_api" {
