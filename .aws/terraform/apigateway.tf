@@ -5,7 +5,7 @@ resource "aws_api_gateway_rest_api" "gateway" {
 }
 
 ################ Option resource ################
-resource "aws_api_gateway_resource" "mosaify_auth_method_resource" {
+resource "aws_api_gateway_resource" "option_method_resource" {
   rest_api_id = "${aws_api_gateway_rest_api.gateway.id}"
   parent_id   = "${aws_api_gateway_rest_api.gateway.root_resource_id}"
   path_part   = "{proxy+}"
@@ -35,12 +35,12 @@ resource "aws_lambda_permission" "apigw_option_lambda" {
   principal     = "apigateway.amazonaws.com"
 
   # More: http://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-control-access-using-iam-policies-to-invoke-api.html
-  source_arn = "arn:aws:execute-api:${var.region}:${local.account_id}:${aws_api_gateway_rest_api.gateway.id}/*/${aws_api_gateway_method.auth_post_method.http_method}${aws_api_gateway_resource.mosaify_auth_method_resource.path}"
+  source_arn = "arn:aws:execute-api:${var.region}:${local.account_id}:${aws_api_gateway_rest_api.gateway.id}/*/${aws_api_gateway_method.auth_post_method.http_method}${aws_api_gateway_resource.auth_method_resource.path}"
 }
 ################ Option resource ################
 
 ################ Auth resource ################
-resource "aws_api_gateway_resource" "mosaify_auth_method_resource" {
+resource "aws_api_gateway_resource" "auth_method_resource" {
   rest_api_id = "${aws_api_gateway_rest_api.gateway.id}"
   parent_id   = "${aws_api_gateway_rest_api.gateway.root_resource_id}"
   path_part   = "auth"
@@ -48,7 +48,7 @@ resource "aws_api_gateway_resource" "mosaify_auth_method_resource" {
 
 resource "aws_api_gateway_method" "auth_post_method" {
   rest_api_id   = aws_api_gateway_rest_api.gateway.id
-  resource_id   = aws_api_gateway_resource.mosaify_auth_method_resource.id
+  resource_id   = aws_api_gateway_resource.auth_method_resource.id
   http_method   = "POST"
   authorization = "NONE"
 }
@@ -70,7 +70,7 @@ resource "aws_lambda_permission" "apigw_auth_lambda" {
   principal     = "apigateway.amazonaws.com"
 
   # More: http://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-control-access-using-iam-policies-to-invoke-api.html
-  source_arn = "arn:aws:execute-api:${var.region}:${local.account_id}:${aws_api_gateway_rest_api.gateway.id}/*/${aws_api_gateway_method.auth_post_method.http_method}${aws_api_gateway_resource.mosaify_auth_method_resource.path}"
+  source_arn = "arn:aws:execute-api:${var.region}:${local.account_id}:${aws_api_gateway_rest_api.gateway.id}/*/${aws_api_gateway_method.auth_post_method.http_method}${aws_api_gateway_resource.auth_method_resource.path}"
 }
 ################ Auth resource ################
 
@@ -113,16 +113,22 @@ resource "aws_lambda_permission" "apigw_auth_lambda" {
 resource "aws_api_gateway_deployment" "deploy_api" {
   rest_api_id = "${aws_api_gateway_rest_api.gateway.id}"
   depends_on = [
-    aws_api_gateway_resource.mosaify_auth_method_resource,
+    aws_api_gateway_resource.auth_method_resource,
+    aws_api_gateway_method.auth_post_method,
     aws_api_gateway_integration.auth_post_lambda,
-    aws_api_gateway_method.auth_post_method
+    aws_api_gateway_resource.option_method_resource,
+    aws_api_gateway_method.option_post_method,
+    aws_api_gateway_integration.option_post_lambda
   ]
 
   triggers = {
     redeployment = sha1(jsonencode([
-      aws_api_gateway_resource.mosaify_auth_method_resource.id,
+      aws_api_gateway_resource.auth_method_resource.id,
+      aws_api_gateway_method.auth_post_method.id,
       aws_api_gateway_integration.auth_post_lambda.id,
-      aws_api_gateway_method.auth_post_method.id
+      aws_api_gateway_resource.option_method_resource.id,
+      aws_api_gateway_method.option_post_method.id,
+      aws_api_gateway_integration.option_post_lambda.id
     ]))
   }
 }
