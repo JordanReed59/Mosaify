@@ -24,7 +24,7 @@ resource "aws_api_gateway_integration" "option_post_lambda" {
   http_method = "${aws_api_gateway_method.option_post_method.http_method}"
 
   integration_http_method = "${aws_api_gateway_method.option_post_method.http_method}"
-  type                    = "AWS"
+  type                    = "AWS_PROXY"
   uri                     = "arn:aws:apigateway:${var.region}:lambda:path/2015-03-31/functions/arn:aws:lambda:${var.region}:${local.account_id}:mosaify-dev-feature-mos-2-option/invocations"
 }
 
