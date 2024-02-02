@@ -11,13 +11,13 @@ const ApiRequestComponent = () => {
     redirectUri: "http://localhost:3000/"
   };
   const headers = {
-    "Access-Control-Allow-Origin": "*"
+    "Content-Type": "application/json"
   };
 
   const fetchData = async () => {
     try {
       const apiUrl = process.env.REACT_APP_API_URL;
-      const response = await axios.post(apiUrl, requestData);
+      const response = await axios.post(apiUrl);
   
       if (response.status === 200) {
         const responseData = response.data;
