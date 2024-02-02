@@ -11,7 +11,7 @@ resource "aws_api_gateway_rest_api" "gateway" {
   description = "Terraform Serverless API Gateway for Mosaify"
 }
 
-################ Option resource ################
+################ Option resource ################ 
 # resource "aws_api_gateway_resource" "option_method_resource" {
 #   rest_api_id = "${aws_api_gateway_rest_api.gateway.id}"
 #   parent_id   = "${aws_api_gateway_rest_api.gateway.root_resource_id}"
