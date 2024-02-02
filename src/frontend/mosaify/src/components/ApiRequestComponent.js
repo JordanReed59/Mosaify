@@ -5,10 +5,10 @@ const ApiRequestComponent = () => {
   const [responseMsg, setResponseMsg] = useState(null);
   const [error, setError] = useState(null);
   const requestData = {
-    authorizationCode: 'value1',
-    codeVerifier: "value2",
-    clientId: "value3",
-    redirectUri: "http://localhost:3000/"
+    // authorizationCode: 'value1',
+    // codeVerifier: "value2",
+    // clientId: "value3",
+    // redirectUri: "http://localhost:3000"
   };
   const headers = {
     "Content-Type": "application/json"
@@ -17,7 +17,9 @@ const ApiRequestComponent = () => {
   const fetchData = async () => {
     try {
       const apiUrl = process.env.REACT_APP_API_URL;
-      const response = await axios.post(apiUrl);
+      const response = await axios.post(apiUrl, requestData, {
+        "Content-Type": "application/json"
+      });
   
       if (response.status === 200) {
         const responseData = response.data;
