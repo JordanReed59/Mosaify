@@ -86,12 +86,15 @@ def lambda_handler(event, context):
     # body = json.loads(event['body'])
     # authorization_code = body['authorization_code']
     # print(authorization_code)
+    origin = "*"
+    if "origin" in event["headers"]:
+        origin = event["headers"]["origin"]
 
     response = {}
     response['statusCode'] = 200
     response['headers'] = {
         'Content-Type': 'application/json; charset=utf-8',
-        'Access-Control-Allow-Origin': 'http://localhost:3000/'
+        'Access-Control-Allow-Origin': origin
     }
     response['body'] = json.dumps({'msg' : "Hello from auth lambda"})
 
