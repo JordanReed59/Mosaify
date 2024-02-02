@@ -15,7 +15,7 @@ resource "aws_api_gateway_rest_api" "gateway" {
 resource "aws_api_gateway_resource" "option_method_resource" {
   rest_api_id = "${aws_api_gateway_rest_api.gateway.id}"
   parent_id   = "${aws_api_gateway_rest_api.gateway.root_resource_id}"
-  path_part   = "{proxy+}"
+  path_part   = "$default"
 }
 
 resource "aws_api_gateway_method" "option_post_method" {
