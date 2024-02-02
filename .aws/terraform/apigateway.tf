@@ -12,22 +12,22 @@ resource "aws_api_gateway_rest_api" "gateway" {
 }
 
 ################ Option resource ################
-resource "aws_api_gateway_resource" "option_method_resource" {
-  rest_api_id = "${aws_api_gateway_rest_api.gateway.id}"
-  parent_id   = "${aws_api_gateway_rest_api.gateway.root_resource_id}"
-  path_part   = "$default"
-}
+# resource "aws_api_gateway_resource" "option_method_resource" {
+#   rest_api_id = "${aws_api_gateway_rest_api.gateway.id}"
+#   parent_id   = "${aws_api_gateway_rest_api.gateway.root_resource_id}"
+#   path_part   = "$default"
+# }
 
 resource "aws_api_gateway_method" "option_post_method" {
   rest_api_id   = aws_api_gateway_rest_api.gateway.id
-  resource_id   = aws_api_gateway_resource.option_method_resource.id
+  resource_id   = aws_api_gateway_rest_api.gateway.root_resource_id
   http_method   = "OPTIONS"
   authorization = "NONE"
 }
 
 resource "aws_api_gateway_integration" "option_post_lambda" {
   rest_api_id = "${aws_api_gateway_rest_api.gateway.id}"
-  resource_id = "${aws_api_gateway_resource.option_method_resource.id}"
+  resource_id = "${aws_api_gateway_rest_api.gateway.root_resource_id}"
   http_method = "${aws_api_gateway_method.option_post_method.http_method}"
 
   integration_http_method = "POST"
