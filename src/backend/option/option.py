@@ -17,4 +17,6 @@ def lambda_handler(event, context):
         'Access-Control-Allow-Headers': 'Content-Type',
         'Access-Control-Allow-Methods': "GET,POST,OPTION"
     }
+    response['isBase64Encoded'] : False
     response['body'] = json.dumps({'msg' : "Hello from auth lambda"})
+    return response
