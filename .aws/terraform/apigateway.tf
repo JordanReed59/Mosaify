@@ -1,5 +1,5 @@
 locals {
-  options_lambda_uri = "arn:aws:apigateway:${var.region}:lambda:path/2015-03-31/functions/arn:aws:lambda:${var.region}:${local.account_id}:mosaify-dev-feature-mos-2-option/invocations"
+  options_lambda_uri = "arn:aws:apigateway:${var.region}:lambda:path/2015-03-31/functions/arn:aws:lambda:${var.region}:${local.account_id}:function:mosaify-dev-feature-mos-2-option/invocations"
   auth_lambda_uri = "arn:aws:apigateway:${var.region}:lambda:path/2015-03-31/functions/arn:aws:lambda:${var.region}:${local.account_id}:function:mosaify-dev-feature-mos-2-auth/invocations"
   options_lambda_name = "mosaify-dev-feature-mos-2-option"
   auth_lambda_name = "mosaify-dev-feature-mos-2-auth"
