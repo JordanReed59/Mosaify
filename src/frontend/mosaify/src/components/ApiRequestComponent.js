@@ -16,9 +16,9 @@ const ApiRequestComponent = () => {
 
   const fetchData = async () => {
     try {
-      const apiUrl = process.env.REACT_APP_API_URL + '/auth';
-      const response = await axios.post(apiUrl, {authorizationCode: 'value1'}, {
-        "Content-Type": "application/json"
+      const apiUrl = '/test/auth';
+      const response = await axios.post(apiUrl, requestData, {
+        headers: headers
       });
   
       if (response.status === 200) {
