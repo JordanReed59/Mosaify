@@ -73,3 +73,4 @@ data "aws_iam_policy_document" "allow_public_access" {
   depends_on = [aws_s3_bucket_public_access_block.static_site_access]
 }
 ########## end s3 static site bucket configuration ##########
+
