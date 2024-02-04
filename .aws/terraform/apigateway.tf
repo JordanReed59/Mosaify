@@ -155,9 +155,10 @@ resource "aws_api_gateway_deployment" "deploy_api" {
     aws_api_gateway_method.auth_post_method,
     aws_api_gateway_integration.auth_post_lambda,
     aws_lambda_permission.apigw_auth_lambda,
-    # aws_api_gateway_resource.option_method_resource,
     aws_api_gateway_method.option_post_method,
     aws_api_gateway_integration.option_post_lambda,
+    aws_api_gateway_method_response.options_response,
+    aws_api_gateway_integration_response.options_integration_response,
     aws_lambda_permission.apigw_option_lambda
   ]
 
@@ -167,9 +168,10 @@ resource "aws_api_gateway_deployment" "deploy_api" {
       aws_api_gateway_method.auth_post_method.id,
       aws_api_gateway_integration.auth_post_lambda.id,
       aws_lambda_permission.apigw_auth_lambda.id,
-      # aws_api_gateway_resource.option_method_resource.id,
       aws_api_gateway_method.option_post_method.id,
       aws_api_gateway_integration.option_post_lambda.id,
+      aws_api_gateway_method_response.options_response.id,
+    aws_api_gateway_integration_response.options_integration_response.id,
       aws_lambda_permission.apigw_option_lambda.id
     ]))
   }
