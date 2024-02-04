@@ -38,22 +38,22 @@ resource "aws_api_gateway_method_response" "options_response" {
 }
 
 # integration response
-resource "aws_api_gateway_integration_response" "options_integration_response" {
-  rest_api_id = aws_api_gateway_rest_api.gateway.id
-  resource_id = aws_api_gateway_rest_api.gateway.root_resource_id
-  http_method = aws_api_gateway_method.option_post_method.http_method
-  status_code = aws_api_gateway_method_response.options_response.status_code
+# resource "aws_api_gateway_integration_response" "options_integration_response" {
+#   rest_api_id = aws_api_gateway_rest_api.gateway.id
+#   resource_id = aws_api_gateway_rest_api.gateway.root_resource_id
+#   http_method = aws_api_gateway_method.option_post_method.http_method
+#   status_code = aws_api_gateway_method_response.options_response.status_code
 
-  response_templates = {
-    "application/json" = ""
-  }
+#   response_templates = {
+#     "application/json" = ""
+#   }
 
-  response_parameters = {
-    "method.response.header.Access-Control-Allow-Origin" = "'*'"
-    "method.response.header.Access-Control-Allow-Methods" = "'GET,POST,OPTIONS'"
-    "method.response.header.Access-Control-Allow-Headers" = "'Content-Type'"
-  }
-}
+#   response_parameters = {
+#     "method.response.header.Access-Control-Allow-Origin" = "'*'"
+#     "method.response.header.Access-Control-Allow-Methods" = "'GET,POST,OPTIONS'"
+#     "method.response.header.Access-Control-Allow-Headers" = "'Content-Type'"
+#   }
+# }
 
 
 resource "aws_api_gateway_integration" "option_post_lambda" {
@@ -158,7 +158,7 @@ resource "aws_api_gateway_deployment" "deploy_api" {
     aws_api_gateway_method.option_post_method,
     aws_api_gateway_integration.option_post_lambda,
     aws_api_gateway_method_response.options_response,
-    aws_api_gateway_integration_response.options_integration_response,
+    # aws_api_gateway_integration_response.options_integration_response,
     aws_lambda_permission.apigw_option_lambda
   ]
 
@@ -171,7 +171,7 @@ resource "aws_api_gateway_deployment" "deploy_api" {
       aws_api_gateway_method.option_post_method.id,
       aws_api_gateway_integration.option_post_lambda.id,
       aws_api_gateway_method_response.options_response.id,
-    aws_api_gateway_integration_response.options_integration_response.id,
+      # aws_api_gateway_integration_response.options_integration_response.id,
       aws_lambda_permission.apigw_option_lambda.id
     ]))
   }
