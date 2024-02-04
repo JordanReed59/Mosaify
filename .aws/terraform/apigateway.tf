@@ -12,18 +12,49 @@ resource "aws_api_gateway_rest_api" "gateway" {
 }
 
 ################ Option resource ################ 
-# resource "aws_api_gateway_resource" "option_method_resource" {
-#   rest_api_id = "${aws_api_gateway_rest_api.gateway.id}"
-#   parent_id   = "${aws_api_gateway_rest_api.gateway.root_resource_id}"
-#   path_part   = "$default"
-# }
-
 resource "aws_api_gateway_method" "option_post_method" {
   rest_api_id   = aws_api_gateway_rest_api.gateway.id
   resource_id   = aws_api_gateway_rest_api.gateway.root_resource_id
   http_method   = "OPTIONS"
   authorization = "NONE"
 }
+
+# method response
+resource "aws_api_gateway_method_response" "options_response" {
+  rest_api_id = aws_api_gateway_rest_api.gateway.id
+  resource_id = aws_api_gateway_rest_api.gateway.root_resource_id
+  http_method = aws_api_gateway_method.option_post_method.http_method
+  status_code = 200
+
+  response_models = {
+    "application/json" = "Empty" # Adjust based on your response content type
+  }
+
+  response_parameters = {
+    "method.response.header.Access-Control-Allow-Origin" = true
+    "method.response.header.Access-Control-Allow-Methods" = true
+    "method.response.header.Access-Control-Allow-Headers" = true
+  }
+}
+
+# integration response
+resource "aws_api_gateway_integration_response" "options_integration_response" {
+  rest_api_id = aws_api_gateway_rest_api.gateway.id
+  resource_id = aws_api_gateway_rest_api.gateway.root_resource_id
+  http_method = aws_api_gateway_method.option_post_method.http_method
+  status_code = aws_api_gateway_method_response.options_response.status_code
+
+  response_templates = {
+    "application/json" = ""
+  }
+
+  response_parameters = {
+    "method.response.header.Access-Control-Allow-Origin" = "'*'"
+    "method.response.header.Access-Control-Allow-Methods" = "'GET,POST,OPTIONS'"
+    "method.response.header.Access-Control-Allow-Headers" = "'Content-Type'"
+  }
+}
+
 
 resource "aws_api_gateway_integration" "option_post_lambda" {
   rest_api_id = "${aws_api_gateway_rest_api.gateway.id}"
