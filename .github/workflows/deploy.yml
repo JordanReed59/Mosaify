@@ -40,34 +40,46 @@ jobs:
             pip install --quiet -r ./mosaify/requirements.txt -t mosaify_python
             pip install --quiet -r ./option/requirements.txt -t option_python
 
-        - name: Zip python dependencies
+        # - name: Zip python dependencies
+        #   run: |
+        #     mkdir -p zips
+        #     cd auth_python
+        #     zip -q -r -g ../zips/auth.zip .
+        #     cd ..
+        #     cd url_python
+        #     zip -q -r -g ../zips/url.zip .
+        #     cd ..
+        #     cd mosaify_python
+        #     zip -q -r -g ../zips/mosaify.zip .
+        #     cd ..
+        #     cd option_python
+        #     zip -q -r -g ../zips/option.zip .
+
+        # - name: Add source code to python dependencies zip
+        #   run: |
+        #     cd ./auth
+        #     zip -q -g ../zips/auth.zip auth.py
+        #     cd ..
+        #     cd ./url
+        #     zip -q -g ../zips/url.zip url.py
+        #     cd ..
+        #     cd ./mosaify
+        #     zip -q -g ../zips/mosaify.zip mosaify.py
+        #     cd ..
+        #     cd ./option
+        #     zip -q -g ../zips/option.zip option.py
+
+        - name: Install and package Python dependencies
           run: |
             mkdir -p zips
-            cd auth_python
-            zip -q -r -g ../zips/auth.zip .
-            cd ..
-            cd url_python
-            zip -q -r -g ../zips/url.zip .
-            cd ..
-            cd mosaify_python
-            zip -q -r -g ../zips/mosaify.zip .
-            cd ..
-            cd option_python
-            zip -q -r -g ../zips/option.zip .
-
-        - name: Add source code to python dependencies zip
-          run: |
-            cd ./auth
-            zip -q -g ../zips/auth.zip auth.py
-            cd ..
-            cd ./url
-            zip -q -g ../zips/url.zip url.py
-            cd ..
-            cd ./mosaify
-            zip -q -g ../zips/mosaify.zip mosaify.py
-            cd ..
-            cd ./option
-            zip -q -g ../zips/option.zip option.py
+            declare -a dirs=("auth" "url" "mosaify" "option")
+            for dir in "${dirs[@]}"; do
+              pip install --quiet -r "./${dir}/requirements.txt" -t "${dir}_python"
+              cd "${dir}_python" || exit
+              zip -q -r -g "../../zips/${dir}.zip" .
+              cd ..
+              zip -q -g "zips/${dir}.zip" "${dir}/${dir}.py"
+            done
 
         - name: Upload artifact for deployment job
           uses: actions/upload-artifact@v2
