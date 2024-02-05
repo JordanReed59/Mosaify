@@ -15,7 +15,7 @@ SPOTIFY_CREDENTIALS = {}
 # Obtain spoitify credentials from secrets manager
 def get_secret():
     print(f"Retriving secret values from {SECRET_NAME}")
-    secrets_client = boto3.client('secretsmanager' )
+    secrets_client = boto3.client('secretsmanager')
 
     try:
         get_secret_value_response = secrets_client.get_secret_value(
