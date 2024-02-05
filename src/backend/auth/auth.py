@@ -50,7 +50,7 @@ def get_access_token(authorization_code):
     token_data = {
         'grant_type': 'authorization_code',
         'code': authorization_code,
-        'redirect_uri': SPOTIFY_CREDENTIALS["REDIRECT_URL"],
+        'redirect_uri': SPOTIFY_CREDENTIALS["REDIRECT_URI"],
     }
 
     # Headers for authentication
