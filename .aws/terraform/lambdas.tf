@@ -66,8 +66,8 @@ data "aws_iam_policy_document" "auth_role_policy" {
   statement {
       sid       =  "ReadSecret"
       effect    =  "Allow"
-      actions   =  "secretsmanager:GetSecretValue"
-      resources =  "arn:aws:secretsmanager:${var.region}:${local.account_id}:secret:mosaify-dev-feature-mos-6-SPOTIFY_CLIENT_CREDENTIALS-91cBdn"
+      actions   =  ["secretsmanager:GetSecretValue"]
+      resources =  ["arn:aws:secretsmanager:${var.region}:${local.account_id}:secret:mosaify-dev-feature-mos-6-SPOTIFY_CLIENT_CREDENTIALS-91cBdn"]
     }
 }
 ############### End Access Token Lambda ###############
