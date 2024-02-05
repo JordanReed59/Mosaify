@@ -73,17 +73,11 @@ def get_access_token(authorization_code):
         access_token = response_data.get('access_token')
 
         print("Successfully retrieved token")
-        return {
-            'statusCode': 200,
-            'body': json.dumps({'accessToken': access_token})
-        }
+        return access_token
     
     except Exception as e:
         print(f'Error getting access token: {e}')
-        return {
-            'statusCode': 500,
-            'body': json.dumps({'error': 'Internal Server Error'})
-        }
+        raise e
 
 def lambda_handler(event, context):
     print(event)
@@ -112,5 +106,6 @@ def lambda_handler(event, context):
         'Access-Control-Allow-Origin': origin
     }
     response['body'] = json.dumps({'access_token' : access_token})
+    print(f"Response: {response}")
 
     return response
