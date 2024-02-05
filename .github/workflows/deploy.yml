@@ -76,9 +76,10 @@ jobs:
             for dir in "${dirs[@]}"; do
               pip install --quiet -r "./${dir}/requirements.txt" -t "${dir}_python"
               cd "${dir}_python" || exit
-              zip -q -r -g "../../zips/${dir}.zip" .
+              zip -q -r -g "../zips/${dir}.zip" .
               cd ..
-              zip -q -g "zips/${dir}.zip" "${dir}/${dir}.py"
+              cd "${dir}" || exit
+              zip -q -g "../zips/${dir}.zip" "${dir}.py"
             done
 
         - name: Upload artifact for deployment job
