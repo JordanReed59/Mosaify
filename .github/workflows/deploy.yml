@@ -80,6 +80,7 @@ jobs:
               cd ..
               cd "${dir}" || exit
               zip -q -g "../zips/${dir}.zip" "${dir}.py"
+              cd ..
             done
 
         - name: Upload artifact for deployment job
