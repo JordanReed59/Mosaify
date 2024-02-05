@@ -30,10 +30,10 @@ const SpotifyAuth = () => {
         };
         console.log(payload.body);
 
-        const response = await fetch(tokenUrl, payload);
-        const data = await response.json();
-        localStorage.setItem('access_token', data.access_token);
-        setAccessToken(data.access_token);
+        // const response = await fetch(tokenUrl, payload);
+        // const data = await response.json();
+        // localStorage.setItem('access_token', data.access_token);
+        // setAccessToken(data.access_token);
       } catch (error) {
         console.error('Error fetching token:', error);
       }
