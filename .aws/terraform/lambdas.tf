@@ -13,12 +13,11 @@ resource "aws_lambda_function" "auth_lambda" {
 #   depends_on = [aws_iam_role_policy_attachment.attach_iam_policy_to_iam_role]
   environment {
     variables = {
-      SECRET_NAME = "foobar",
+      SECRET_NAME = "arn:aws:secretsmanager:${var.region}:${local.account_id}:secret:mosaify-dev-feature-mos-6-SPOTIFY_CLIENT_CREDENTIALS-91cBdn",
       REGION = var.region,
       TOKEN_URL = "https://accounts.spotify.com/api/token"
     }
   }
-  
 }
 
 # lambda role
@@ -54,7 +53,7 @@ resource "aws_iam_policy" "iam_policy_for_auth_lambda" {
 
 data "aws_iam_policy_document" "auth_role_policy" {
   statement {
-    sid       = ""
+    sid       = "CreatLogs"
     effect    = "Allow"
     resources = ["arn:aws:logs:*:*:*"]
 
@@ -64,6 +63,12 @@ data "aws_iam_policy_document" "auth_role_policy" {
       "logs:PutLogEvents",
     ]
   }
+  statement {
+      sid       =  "ReadSecret"
+      effect    =  "Allow"
+      actions   =  "secretsmanager:GetSecretValue"
+      resources =  "arn:aws:secretsmanager:${var.region}:${local.account_id}:secret:mosaify-dev-feature-mos-6-SPOTIFY_CLIENT_CREDENTIALS-91cBdn"
+    }
 }
 ############### End Access Token Lambda ###############
 
