@@ -104,7 +104,7 @@ jobs:
         shell: bash
         working-directory: .aws/terraform
     outputs:
-      tag: ${{ steps.outputs.outputs.S3_BUCKET_NAME }}
+      S3_BUCKET_NAME: ${{ steps.outputs.outputs.S3_BUCKET_NAME }}
     steps:
       - name: Git checkout
         uses: actions/checkout@v3
@@ -140,6 +140,7 @@ jobs:
         uses: hashicorp/setup-terraform@v2
         with:
           terraform_version: 1.7.2
+          terraform_wrapper: false
 
       - name: Terraform Init
         id: init
@@ -175,11 +176,13 @@ jobs:
       - name: Terraform Outputs
         id: outputs
         run: |
-          grep --version
-          jq --version
-          terraform output -json
-          output=$(terraform output -json 2>&1 | grep -oE '{[^}]+}' | sed 's/\\"/"/g')
-          echo "$output"
+          terraform output s3_bucket_name
+          echo "S3_BUCKET_NAME=bucket_name" >> $GITHUB_OUTPUT
+      #     grep --version
+      #     jq --version
+      #     terraform output -json
+      #     output=$(terraform output -json 2>&1 | grep -oE '{[^}]+}' | sed 's/\\"/"/g')
+      #     echo "$output"
       #     terraform output -json
       #     S3_BUCKET_NAME=$(terraform output -json | jq -r '.s3_bucket_name.value')
       #     echo "the bucket name: ${S3_BUCKET_NAME}"
