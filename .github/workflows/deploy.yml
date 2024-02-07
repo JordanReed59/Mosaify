@@ -183,7 +183,7 @@ jobs:
           API_INVOKE_URL=$(echo $JSON | jq -r '.api_invoke_url.value')
           echo "bucket name: ${S3_BUCKET_NAME}"
           echo "api invoke url: ${S3_BUCKET_NAME}"
-          echo "S3_BUCKET_NAME=${S3_BUCKET_NAME}" >> $GITHUB_OUTPUT
+          echo "S3_BUCKET_NAME=$S3_BUCKET_NAME" >> $GITHUB_OUTPUT
           echo "API_INVOKE_URL=${API_INVOKE_URL}" >> $GITHUB_OUTPUT
       #     grep --version
       #     jq --version
