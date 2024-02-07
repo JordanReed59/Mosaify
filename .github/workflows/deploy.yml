@@ -218,7 +218,7 @@ jobs:
 
       - name: Get outputs
         env:
-          ENCRYPTED_S3_BUCKET_NAME: "${{ needs.apply.outputs.ENCRYPTED_S3_BUCKET_NAME }}"
+          ENCRYPTED_S3_BUCKET_NAME: ${{ needs.apply.outputs.ENCRYPTED_S3_BUCKET_NAME }}
         #   API_INVOKE_URL: ${{ needs.apply.outputs.API_INVOKE_URL }}
         run: |
           echo $ENCRYPTED_S3_BUCKET_NAME
