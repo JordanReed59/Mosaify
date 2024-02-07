@@ -172,7 +172,7 @@ jobs:
       - name: Terraform Outputs
         run: |
           export S3_BUCKET_NAME=$(terraform output s3_bucket_name)
-          echo $S3_BUCKET_NAME
+          echo "the bucket name: ${S3_BUCKET_NAME}"
 
   # post-deploy:
   #   needs: [plan, apply]
