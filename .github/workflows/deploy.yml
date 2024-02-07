@@ -171,8 +171,7 @@ jobs:
 
       - name: Terraform Outputs
         run: |
-          terraform output s3_bucket_name
-          export S3_BUCKET_NAME="$(terraform output -raw s3_bucket_name)"
+          export S3_BUCKET_NAME=(terraform output s3_bucket_name)
           echo $S3_BUCKET_NAME
 
   # post-deploy:
