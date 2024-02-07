@@ -243,12 +243,32 @@ jobs:
           echo "S3_BUCKET_NAME=${S3_BUCKET_NAME}" >> $GITHUB_ENV
           echo "API_INVOKE_URL=${API_INVOKE_URL}" >> $GITHUB_ENV
           echo "S3_SITE_URL=${S3_SITE_URL}" >> $GITHUB_ENV
+
+      - name: Set ENV variables
+        run: |
+          echo "REPO_NAME=${GITHUB_REPOSITORY#$GITHUB_REPOSITORY_OWNER/}" >> $GITHUB_ENV
+          if [[ $GITHUB_REF == refs/heads/main ]]; then
+            echo "Using QA Role"
+            echo "AWS_ROLE=${{ secrets.AWS_QA_ROLE }}" >> $GITHUB_ENV
+            echo "ENV=qa" >> $GITHUB_ENV
+          elif [[ $GITHUB_REF == refs/heads/develop ]]; then
+            echo "Using Test Role"
+            echo "AWS_ROLE=${{ secrets.AWS_TEST_ROLE }}" >> $GITHUB_ENV
+            echo "ENV=test" >> $GITHUB_ENV
+          elif [[ $GITHUB_REF == refs/heads/feature/* || $GITHUB_REF == refs/heads/bugfix/* || $GITHUB_REF == refs/heads/task/* || $GITHUB_REF == refs/heads/hotfix/* ]]; then
+            echo "Using Dev Role"
+            echo "AWS_ROLE=${{ secrets.AWS_DEV_ROLE }}" >> $GITHUB_ENV
+            echo "ENV=dev" >> $GITHUB_ENV
+          else
+            echo "Invalid branch name. Stopping the action."
+            exit 1
+          fi
           
       - name: Configure AWS credentials from AWS account
         uses: aws-actions/configure-aws-credentials@v1
         with:
-          role-to-assume: ${{ secrets.AWS_ROLE }}
-          aws-region: ${{ secrets.AWS_REGION }}
+          role-to-assume: ${{ env.AWS_ROLE }}
+          aws-region: ${{ env.AWS_REGION }}
           role-session-name: GitHub-OIDC-TERRAFORM
 
       - name: Setup Node
@@ -273,4 +293,4 @@ jobs:
   #     - name: Copy files to the test website with the AWS CLI
   #       env:
   #           AWS_STATIC_BUCKET_NAME: "mosaify-static-page"
-  #       run: aws s3 sync ./build s3://$AWS_STATIC_BUCKET_NAME
+  #       run: aws s3 sync ./build s3://${{ env.S3_BUCKET_NAME }}
