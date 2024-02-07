@@ -168,3 +168,50 @@ jobs:
 
       - name: Terraform Apply
         run: terraform apply -auto-approve -input=false
+
+      - name: Terraform Outputs
+        run: |
+          export S3_BUCKET_NAME="${terraform output s3_bucket_name}"
+          echo $S3_BUCKET_NAME
+
+  # post-deploy:
+  #   needs: [plan, apply]
+  #   runs-on: ubuntu-latest
+  #   defaults:
+  #     run:
+  #       shell: bash
+  #       working-directory: src/frontend/mosaify
+
+  #   steps:
+  #     - name: Git checkout
+  #       uses: actions/checkout@v3
+
+  #     - name: Configure AWS credentials from AWS account
+  #       uses: aws-actions/configure-aws-credentials@v1
+  #       with:
+  #         role-to-assume: ${{ secrets.AWS_ROLE }}
+  #         aws-region: ${{ secrets.AWS_REGION }}
+  #         role-session-name: GitHub-OIDC-TERRAFORM
+
+  #     - name: Setup Node
+  #       uses: actions/setup-node@v3
+  #       with:
+  #         node-version: '21.x'
+
+  #     - name: Add .env
+  #       run: |
+  #         touch .env
+  #         echo 'REACT_APP_SPOTIFY_CLIENT_ID = ${{ secrets.SPOTIFY_CLIENT_ID }}' >> .env
+  #         echo 'REACT_APP_REDIRECT_URI = ${{ secrets.SPOTIFY_CLIENT_SECRET }}' >> .env
+  #         echo 'REACT_APP_API_URL = ${{ secrets.NEXTAUTH_URL }}' >> .env
+
+  #     - name: Install node
+  #       run: npm install
+
+  #     - name: Build node app
+  #       run: npm run build
+
+  #     - name: Copy files to the test website with the AWS CLI
+  #       env:
+  #           AWS_STATIC_BUCKET_NAME: "mosaify-static-page"
+  #       run: aws s3 sync ./build s3://$AWS_STATIC_BUCKET_NAME
