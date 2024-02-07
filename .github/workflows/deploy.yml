@@ -187,19 +187,6 @@ jobs:
           API_INVOKE_URL=$(echo $JSON | jq -r '.api_invoke_url.value')
           S3_SITE_URL=$(echo $JSON | jq -r '.s3_static_site_url.value')
 
-          # loop
-          # declare -a var=("S3_BUCKET_NAME" "API_INVOKE_URL" "S3_SITE_URL")
-          # for var in "${dirs[@]}"; do
-          #   BINARY_ENCRYPTED_SECRET=$(echo -n "${var}" | openssl enc -aes-256-cbc -pbkdf2 -salt -k "${{ secrets.ENCRYPTION_PASSWORD }}");
-          #   ENCRYPTED_SECRET=$(echo -n "$BINARY_ENCRYPTED_SECRET" | base64 -w 0);
-          #   # echo $ENCRYPTED_S3_BUCKET_NAME
-
-          #   echo "ENCRYPTED_${var}=$ENCRYPTED_SECRET" >> $GITHUB_OUTPUT
-          # done
-
-          # echo "bucket name: ${S3_BUCKET_NAME}"
-          # echo "api invoke url: ${S3_BUCKET_NAME}"
-
           BINARY_ENCRYPTED_S3_BUCKET_NAME=$(echo -n "$S3_BUCKET_NAME" | openssl enc -aes-256-cbc -pbkdf2 -salt -k "${{ secrets.ENCRYPTION_PASSWORD }}");
           ENCRYPTED_S3_BUCKET_NAME=$(echo -n "$BINARY_ENCRYPTED_S3_BUCKET_NAME" | base64 -w 0);
           echo "ENCRYPTED_S3_BUCKET_NAME=$ENCRYPTED_S3_BUCKET_NAME" >> $GITHUB_OUTPUT
@@ -243,38 +230,39 @@ jobs:
           ENCRYPTED_S3_BUCKET_NAME: ${{ needs.apply.outputs.ENCRYPTED_S3_BUCKET_NAME }}
           ENCRYPTED_API_INVOKE_URL: ${{ needs.apply.outputs.ENCRYPTED_API_INVOKE_URL }}
           ENCRYPTED_S3_SITE_URL: ${{ needs.apply.outputs.ENCRYPTED_S3_SITE_URL }}
-        #   API_INVOKE_URL: ${{ needs.apply.outputs.API_INVOKE_URL }}
         run: |
           BINARY_DENCRYPTED_S3_BUCKET_NAME=$(echo -n "$ENCRYPTED_S3_BUCKET_NAME" | base64 --decode);
           S3_BUCKET_NAME=$(echo -n "$BINARY_DENCRYPTED_S3_BUCKET_NAME" | openssl enc -aes-256-cbc -pbkdf2 -d -salt -k "${{ secrets.ENCRYPTION_PASSWORD }}");
-          echo $S3_BUCKET_NAME
 
           BINARY_DENCRYPTED_API_INVOKE_URL=$(echo -n "$ENCRYPTED_API_INVOKE_URL" | base64 --decode);
           API_INVOKE_URL=$(echo -n "$BINARY_DENCRYPTED_S3_BUCKET_NAME" | openssl enc -aes-256-cbc -pbkdf2 -d -salt -k "${{ secrets.ENCRYPTION_PASSWORD }}");
-          echo $API_INVOKE_URL
 
           BINARY_DENCRYPTED_S3_SITE_URL=$(echo -n "$ENCRYPTED_S3_SITE_URL" | base64 --decode);
           S3_SITE_URL=$(echo -n "$BINARY_DENCRYPTED_S3_SITE_URL" | openssl enc -aes-256-cbc -pbkdf2 -d -salt -k "${{ secrets.ENCRYPTION_PASSWORD }}");
-          echo $S3_SITE_URL
+
+          echo "S3_BUCKET_NAME=${S3_BUCKET_NAME}" >> $GITHUB_ENV
+          echo "API_INVOKE_URL=${API_INVOKE_URL}" >> $GITHUB_ENV
+          echo "S3_SITE_URL=${S3_SITE_URL}" >> $GITHUB_ENV
           
-  #     - name: Configure AWS credentials from AWS account
-  #       uses: aws-actions/configure-aws-credentials@v1
-  #       with:
-  #         role-to-assume: ${{ secrets.AWS_ROLE }}
-  #         aws-region: ${{ secrets.AWS_REGION }}
-  #         role-session-name: GitHub-OIDC-TERRAFORM
+      - name: Configure AWS credentials from AWS account
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          role-to-assume: ${{ secrets.AWS_ROLE }}
+          aws-region: ${{ secrets.AWS_REGION }}
+          role-session-name: GitHub-OIDC-TERRAFORM
 
-  #     - name: Setup Node
-  #       uses: actions/setup-node@v3
-  #       with:
-  #         node-version: '21.x'
+      - name: Setup Node
+        uses: actions/setup-node@v3
+        with:
+          node-version: '21.x'
 
-  #     - name: Add .env
-  #       run: |
-  #         touch .env
-  #         echo 'REACT_APP_SPOTIFY_CLIENT_ID = ${{ secrets.SPOTIFY_CLIENT_ID }}' >> .env
-  #         echo 'REACT_APP_REDIRECT_URI = ${{ secrets.SPOTIFY_CLIENT_SECRET }}' >> .env
-  #         echo 'REACT_APP_API_URL = ${{ secrets.NEXTAUTH_URL }}' >> .env
+      - name: Add .env
+        run: |
+          touch .env
+          echo 'REACT_APP_SPOTIFY_CLIENT_ID = ${{ secrets.SPOTIFY_CLIENT_ID }}' >> .env
+          echo 'REACT_APP_REDIRECT_URI = ${{ env.S3_SITE_URL }}' >> .env
+          echo 'REACT_APP_API_URL = ${{ env.API_INVOKE_URL }}' >> .env
+          cat .env
 
   #     - name: Install node
   #       run: npm install
