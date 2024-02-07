@@ -188,7 +188,7 @@ jobs:
           ENCRYPTED_S3_BUCKET_NAME=$(echo -n "$BINARY_ENCRYPTED_SECRET" | base64);
           echo $ENCRYPTED_S3_BUCKET_NAME
 
-          echo "ENCRYPTED_S3_BUCKET_NAME=$ENCRYPTED_S3_BUCKET_NAME" >> $GITHUB_OUTPUT
+          echo "ENCRYPTED_S3_BUCKET_NAME=\"$ENCRYPTED_S3_BUCKET_NAME"" >> $GITHUB_OUTPUT
 
       #     echo "S3_BUCKET_NAME=$S3_BUCKET_NAME" >> $GITHUB_OUTPUT
       #     echo "API_INVOKE_URL=${API_INVOKE_URL}" >> $GITHUB_OUTPUT
@@ -218,7 +218,7 @@ jobs:
 
       - name: Get outputs
         env:
-          ENCRYPTED_S3_BUCKET_NAME: ${{ needs.apply.outputs.ENCRYPTED_S3_BUCKET_NAME }}
+          ENCRYPTED_S3_BUCKET_NAME: "${{ needs.apply.outputs.ENCRYPTED_S3_BUCKET_NAME }}"
         #   API_INVOKE_URL: ${{ needs.apply.outputs.API_INVOKE_URL }}
         run: |
           echo $ENCRYPTED_S3_BUCKET_NAME
