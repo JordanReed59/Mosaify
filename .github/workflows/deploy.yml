@@ -188,23 +188,29 @@ jobs:
           S3_SITE_URL=$(echo $JSON | jq -r '.s3_static_site_url.value')
 
           # loop
-          declare -a var=("S3_BUCKET_NAME" "API_INVOKE_URL" "S3_SITE_URL")
-          for var in "${dirs[@]}"; do
-            BINARY_ENCRYPTED_SECRET=$(echo -n "${var}" | openssl enc -aes-256-cbc -pbkdf2 -salt -k "${{ secrets.ENCRYPTION_PASSWORD }}");
-            ENCRYPTED_SECRET=$(echo -n "$BINARY_ENCRYPTED_SECRET" | base64 -w 0);
-            # echo $ENCRYPTED_S3_BUCKET_NAME
+          # declare -a var=("S3_BUCKET_NAME" "API_INVOKE_URL" "S3_SITE_URL")
+          # for var in "${dirs[@]}"; do
+          #   BINARY_ENCRYPTED_SECRET=$(echo -n "${var}" | openssl enc -aes-256-cbc -pbkdf2 -salt -k "${{ secrets.ENCRYPTION_PASSWORD }}");
+          #   ENCRYPTED_SECRET=$(echo -n "$BINARY_ENCRYPTED_SECRET" | base64 -w 0);
+          #   # echo $ENCRYPTED_S3_BUCKET_NAME
 
-            echo "ENCRYPTED_${var}=$ENCRYPTED_SECRET" >> $GITHUB_OUTPUT
-          done
+          #   echo "ENCRYPTED_${var}=$ENCRYPTED_SECRET" >> $GITHUB_OUTPUT
+          # done
 
           # echo "bucket name: ${S3_BUCKET_NAME}"
           # echo "api invoke url: ${S3_BUCKET_NAME}"
 
-          # BINARY_ENCRYPTED_SECRET=$(echo -n "$S3_BUCKET_NAME" | openssl enc -aes-256-cbc -pbkdf2 -salt -k "${{ secrets.ENCRYPTION_PASSWORD }}");
-          # ENCRYPTED_S3_BUCKET_NAME=$(echo -n "$BINARY_ENCRYPTED_SECRET" | base64 -w 0);
-          # echo $ENCRYPTED_S3_BUCKET_NAME
+          BINARY_ENCRYPTED_S3_BUCKET_NAME=$(echo -n "$S3_BUCKET_NAME" | openssl enc -aes-256-cbc -pbkdf2 -salt -k "${{ secrets.ENCRYPTION_PASSWORD }}");
+          ENCRYPTED_S3_BUCKET_NAME=$(echo -n "$BINARY_ENCRYPTED_S3_BUCKET_NAME" | base64 -w 0);
+          echo "ENCRYPTED_S3_BUCKET_NAME=$ENCRYPTED_S3_BUCKET_NAME" >> $GITHUB_OUTPUT
 
-          # echo "ENCRYPTED_S3_BUCKET_NAME=$ENCRYPTED_S3_BUCKET_NAME" >> $GITHUB_OUTPUT
+          BINARY_ENCRYPTED_API_INVOKE_URL=$(echo -n "$API_INVOKE_URL" | openssl enc -aes-256-cbc -pbkdf2 -salt -k "${{ secrets.ENCRYPTION_PASSWORD }}");
+          ENCRYPTED_API_INVOKE_URL=$(echo -n "$BINARY_ENCRYPTED_API_INVOKE_URL" | base64 -w 0);
+          echo "ENCRYPTED_API_INVOKE_URL=$ENCRYPTED_API_INVOKE_URL" >> $GITHUB_OUTPUT
+
+          BINARY_ENCRYPTED_S3_SITE_URL=$(echo -n "$S3_SITE_URL" | openssl enc -aes-256-cbc -pbkdf2 -salt -k "${{ secrets.ENCRYPTION_PASSWORD }}");
+          ENCRYPTED_S3_S3_SITE_URL=$(echo -n "$BINARY_ENCRYPTED_S3_SITE_URL" | base64 -w 0);
+          echo "ENCRYPTED_S3_SITE_URL=$ENCRYPTED_S3_SITE_URL" >> $GITHUB_OUTPUT
 
       #     echo "S3_BUCKET_NAME=$S3_BUCKET_NAME" >> $GITHUB_OUTPUT
       #     echo "API_INVOKE_URL=${API_INVOKE_URL}" >> $GITHUB_OUTPUT
@@ -239,7 +245,6 @@ jobs:
           ENCRYPTED_S3_SITE_URL: ${{ needs.apply.outputs.ENCRYPTED_S3_SITE_URL }}
         #   API_INVOKE_URL: ${{ needs.apply.outputs.API_INVOKE_URL }}
         run: |
-          echo $ENCRYPTED_S3_BUCKET_NAME
           BINARY_DENCRYPTED_S3_BUCKET_NAME=$(echo -n "$ENCRYPTED_S3_BUCKET_NAME" | base64 --decode);
           S3_BUCKET_NAME=$(echo -n "$BINARY_DENCRYPTED_S3_BUCKET_NAME" | openssl enc -aes-256-cbc -pbkdf2 -d -salt -k "${{ secrets.ENCRYPTION_PASSWORD }}");
 
