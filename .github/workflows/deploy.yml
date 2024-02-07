@@ -199,20 +199,6 @@ jobs:
           ENCRYPTED_S3_SITE_URL=$(echo -n "$BINARY_ENCRYPTED_S3_SITE_URL" | base64 -w 0);
           echo "ENCRYPTED_S3_SITE_URL=$ENCRYPTED_S3_SITE_URL" >> $GITHUB_OUTPUT
 
-      #     echo "S3_BUCKET_NAME=$S3_BUCKET_NAME" >> $GITHUB_OUTPUT
-      #     echo "API_INVOKE_URL=${API_INVOKE_URL}" >> $GITHUB_OUTPUT
-      #     grep --version
-      #     jq --version
-      #     terraform output -json
-      #     output=$(terraform output -json 2>&1 | grep -oE '{[^}]+}' | sed 's/\\"/"/g')
-      #     echo "$output"
-      #     terraform output -json
-          # S3_BUCKET_NAME=$(terraform output -json | jq -r '.s3_bucket_name.value')
-          # echo "the bucket name: ${S3_BUCKET_NAME}"
-      #     echo "S3_BUCKET_NAME=${S3_BUCKET_NAME}" >> $GITHUB_OUTPUT
-
-      # -
-
   post-deploy:
     needs: [plan, apply]
     runs-on: ubuntu-latest
