@@ -175,8 +175,10 @@ jobs:
       - name: Terraform Outputs
         id: outputs
         run: |
-          terraform output -json
-          S3_BUCKET_NAME=$(terraform output -json | jq -r '.s3_bucket_name.value')
+          output=$(terraform output -json 2>&1 | grep -E '^{.*}$' | jq '.')
+          echo $output
+      #     terraform output -json
+      #     S3_BUCKET_NAME=$(terraform output -json | jq -r '.s3_bucket_name.value')
       #     echo "the bucket name: ${S3_BUCKET_NAME}"
       #     echo "S3_BUCKET_NAME=${S3_BUCKET_NAME}" >> $GITHUB_OUTPUT
 
