@@ -9,6 +9,7 @@ locals {
 resource "aws_api_gateway_rest_api" "gateway" {
   name        = "${module.namespace.namespace}-api"
   description = "Terraform Serverless API Gateway for Mosaify"
+  tags = module.namespace.tags
 }
 
 ################ Option resource ################ 
@@ -180,5 +181,6 @@ resource "aws_api_gateway_deployment" "deploy_api" {
 resource "aws_api_gateway_stage" "stage" {
   deployment_id = aws_api_gateway_deployment.deploy_api.id
   rest_api_id   = aws_api_gateway_rest_api.gateway.id
-  stage_name    = "test"
+  stage_name    = var.environment
+  tags = module.namespace.tags
 }
