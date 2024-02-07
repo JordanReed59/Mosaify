@@ -193,7 +193,7 @@ jobs:
 
       - name: Get outputs
         env:
-          TEST: ${{ needs.apply.outputs.test }}
+          TEST: ${{ needs.apply.outputs.tag }}
         run: |
           echo "$TEST"
       
