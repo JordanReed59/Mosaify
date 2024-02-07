@@ -182,10 +182,10 @@ jobs:
           S3_BUCKET_NAME=$(echo $JSON | jq -r '.s3_bucket_name.value')
           API_INVOKE_URL=$(echo $JSON | jq -r '.api_invoke_url.value')
           echo "bucket name: ${S3_BUCKET_NAME}"
-          echo "api invoke url: ${S3_BUCKET_NAME}"]
+          echo "api invoke url: ${S3_BUCKET_NAME}"
 
           BINARY_ENCRYPTED_SECRET=$(echo -n "$S3_BUCKET_NAME" | openssl enc -aes-256-cbc -pbkdf2 -salt -k "${{ secrets.ENCRYPTION_PASSWORD }}");
-          ENCRYPTED_S3_BUCKET_NAME=$(echo -n "$BINARY_ENCRYPTED_SECRET" | base64);
+          ENCRYPTED_S3_BUCKET_NAME=$(echo -n "$BINARY_ENCRYPTED_SECRET" | base64 -w 0);
           echo $ENCRYPTED_S3_BUCKET_NAME
 
           echo "ENCRYPTED_S3_BUCKET_NAME=\"$ENCRYPTED_S3_BUCKET_NAME\"" >> $GITHUB_OUTPUT
