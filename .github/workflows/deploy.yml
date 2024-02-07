@@ -179,7 +179,7 @@ jobs:
           terraform output s3_bucket_name
           export TEST=$(terraform output s3_bucket_name)
           echo $TEST
-          echo "S3_BUCKET_NAME=bucket_name" >> $GITHUB_OUTPUT
+          echo "S3_BUCKET_NAME=$(terraform output s3_bucket_name)" >> $GITHUB_OUTPUT
       #     grep --version
       #     jq --version
       #     terraform output -json
