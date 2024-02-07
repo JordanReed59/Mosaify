@@ -266,7 +266,7 @@ jobs:
         run: |
           touch .env
           echo 'REACT_APP_CLIENT_ID = ${{ secrets.SPOTIFY_CLIENT_ID }}' >> .env
-          echo 'REACT_APP_REDIRECT_URI = ${{ env.S3_SITE_URL }}' >> .env
+          echo 'REACT_APP_REDIRECT_URI = http://${{ env.S3_SITE_URL }}' >> .env
           echo 'REACT_APP_API_URL = ${{ env.API_INVOKE_URL }}' >> .env
           cat .env
 
