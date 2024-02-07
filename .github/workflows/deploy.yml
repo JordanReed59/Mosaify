@@ -177,6 +177,8 @@ jobs:
         id: outputs
         run: |
           terraform output s3_bucket_name
+          expert TEST=$(terraform output s3_bucket_name)
+          echo $TEST
           echo "S3_BUCKET_NAME=bucket_name" >> $GITHUB_OUTPUT
       #     grep --version
       #     jq --version
