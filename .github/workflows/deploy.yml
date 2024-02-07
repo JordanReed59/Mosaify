@@ -279,16 +279,16 @@ jobs:
       - name: Add .env
         run: |
           touch .env
-          echo 'REACT_APP_SPOTIFY_CLIENT_ID = ${{ secrets.SPOTIFY_CLIENT_ID }}' >> .env
+          echo 'REACT_APP_CLIENT_ID = ${{ secrets.SPOTIFY_CLIENT_ID }}' >> .env
           echo 'REACT_APP_REDIRECT_URI = ${{ env.S3_SITE_URL }}' >> .env
           echo 'REACT_APP_API_URL = ${{ env.API_INVOKE_URL }}' >> .env
           cat .env
 
-  #     - name: Install node
-  #       run: npm install
+      - name: Install node
+        run: npm install
 
-  #     - name: Build node app
-  #       run: npm run build
+      - name: Build node app
+        run: npm run build
 
   #     - name: Copy files to the test website with the AWS CLI
   #       env:
