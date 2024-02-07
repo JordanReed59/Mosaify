@@ -182,7 +182,7 @@ jobs:
           # echo $TEST
           JSON=$(terraform output -json | jq -r '.')
           echo $JSON
-          S3_BUCKET_NAME=$(echo $JSON | jq -r '.s3_bucket_name.value')
+          export S3_BUCKET_NAME=$(echo $JSON | jq -r '.s3_bucket_name.value')
           echo "the bucket name: ${S3_BUCKET_NAME}"
           echo "S3_BUCKET_NAME=${S3_BUCKET_NAME}" >> $GITHUB_OUTPUT
       #     grep --version
