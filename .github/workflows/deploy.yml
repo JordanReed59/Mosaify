@@ -217,11 +217,11 @@ jobs:
         uses: actions/checkout@v3
 
       - name: Get outputs
-        # env:
-        #   S3_BUCKET_NAME: ${{ needs.apply.outputs.ENCRYPTED_S3_BUCKET_NAME }}
+        env:
+          ENCRYPTED_S3_BUCKET_NAME: ${{ needs.apply.outputs.ENCRYPTED_S3_BUCKET_NAME }}
         #   API_INVOKE_URL: ${{ needs.apply.outputs.API_INVOKE_URL }}
         run: |
-          ENCRYPTED_S3_BUCKET_NAME=${{ needs.apply.outputs.ENCRYPTED_S3_BUCKET_NAME }};
+          echo $ENCRYPTED_S3_BUCKET_NAME
           BINARY_DENCRYPTED_S3_BUCKET_NAME=$(echo -n "$ENCRYPTED_S3_BUCKET_NAME" | base64 --decode);
           S3_BUCKET_NAME=$(echo -n "$BINARY_DENCRYPTED_S3_BUCKET_NAME" | openssl enc -aes-256-cbc -pbkdf2 -d -salt -k "${{ secrets.ENCRYPTION_PASSWORD }}");
           echo $S3_BUCKET_NAME
