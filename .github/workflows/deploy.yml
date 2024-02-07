@@ -186,12 +186,13 @@ jobs:
         working-directory: src/frontend/mosaify
 
     steps:
+      - name: Git checkout
+        uses: actions/checkout@v3
+        
       - name: Get outputs
         run: |
           echo ${{ needs.apply.steps.outputs.outputs.TAG }}
 
-      - name: Git checkout
-        uses: actions/checkout@v3
 
   #     - name: Configure AWS credentials from AWS account
   #       uses: aws-actions/configure-aws-credentials@v1
