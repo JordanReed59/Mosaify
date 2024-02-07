@@ -184,7 +184,8 @@ jobs:
           echo $JSON
           export S3_BUCKET_NAME=$(echo $JSON | jq -r '.s3_bucket_name.value')
           echo "the bucket name: ${S3_BUCKET_NAME}"
-          echo "S3_BUCKET_NAME=${S3_BUCKET_NAME}" >> $GITHUB_OUTPUT
+          TEST=hello
+          echo "S3_BUCKET_NAME=${TEST}" >> $GITHUB_OUTPUT
       #     grep --version
       #     jq --version
       #     terraform output -json
