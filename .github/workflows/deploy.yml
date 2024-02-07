@@ -290,7 +290,5 @@ jobs:
       - name: Build node app
         run: npm run build
 
-  #     - name: Copy files to the test website with the AWS CLI
-  #       env:
-  #           AWS_STATIC_BUCKET_NAME: "mosaify-static-page"
-  #       run: aws s3 sync ./build s3://${{ env.S3_BUCKET_NAME }}
+      - name: Copy files to the test website with the AWS CLI
+        run: aws s3 sync ./build s3://${{ env.S3_BUCKET_NAME }}
