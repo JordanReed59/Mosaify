@@ -247,16 +247,16 @@ jobs:
         run: |
           BINARY_DENCRYPTED_S3_BUCKET_NAME=$(echo -n "$ENCRYPTED_S3_BUCKET_NAME" | base64 --decode);
           S3_BUCKET_NAME=$(echo -n "$BINARY_DENCRYPTED_S3_BUCKET_NAME" | openssl enc -aes-256-cbc -pbkdf2 -d -salt -k "${{ secrets.ENCRYPTION_PASSWORD }}");
+          echo $S3_BUCKET_NAME
 
           BINARY_DENCRYPTED_API_INVOKE_URL=$(echo -n "$ENCRYPTED_API_INVOKE_URL" | base64 --decode);
           API_INVOKE_URL=$(echo -n "$BINARY_DENCRYPTED_S3_BUCKET_NAME" | openssl enc -aes-256-cbc -pbkdf2 -d -salt -k "${{ secrets.ENCRYPTION_PASSWORD }}");
+          echo $API_INVOKE_URL
 
           BINARY_DENCRYPTED_S3_SITE_URL=$(echo -n "$ENCRYPTED_S3_SITE_URL" | base64 --decode);
           S3_SITE_URL=$(echo -n "$BINARY_DENCRYPTED_S3_SITE_URL" | openssl enc -aes-256-cbc -pbkdf2 -d -salt -k "${{ secrets.ENCRYPTION_PASSWORD }}");
-          
-          echo $S3_BUCKET_NAME
-          echo $API_INVOKE_URL
           echo $S3_SITE_URL
+          
   #     - name: Configure AWS credentials from AWS account
   #       uses: aws-actions/configure-aws-credentials@v1
   #       with:
