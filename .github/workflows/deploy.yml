@@ -178,7 +178,7 @@ jobs:
           grep --version
           jq --version
           terraform output -json
-          output=$(terraform output -json 2>&1 | grep -E '^{.*}$' | jq '.')
+          output=$(terraform output -json 2>&1 | jq -r 'select(. != null)')
           echo "$output"
       #     terraform output -json
       #     S3_BUCKET_NAME=$(terraform output -json | jq -r '.s3_bucket_name.value')
