@@ -105,7 +105,8 @@ jobs:
         working-directory: .aws/terraform
     outputs:
       ENCRYPTED_S3_BUCKET_NAME: ${{ steps.outputs.outputs.ENCRYPTED_S3_BUCKET_NAME }}
-      API_INVOKE_URL: ${{ steps.outputs.outputs.API_INVOKE_URL }}
+      ENCRYPTED_API_INVOKE_URL: ${{ steps.outputs.outputs.ENCRYPTED_API_INVOKE_URL }}
+      ENCRYPTED_S3_SITE_URL: ${{ steps.outputs.outputs.ENCRYPTED_S3_SITE_URL }}
     steps:
       - name: Git checkout
         uses: actions/checkout@v3
@@ -174,21 +175,36 @@ jobs:
         id: apply
         run: terraform apply -auto-approve -input=false
 
+      # This step takes the tf outputs and saves them to the outputs of this step allowing them to be used by sequential jobs.
+      # In order to do this I saved json of tf output to variable and extracted the neccassary values
+      # Since github sees these values as secrets and it wouldn't let me pass them in the outputs I encrpyted them using openssl and base64 
+        # Ref: https://medium.com/@adel.muhandes/securely-passing-secrets-between-github-action-jobs-a-simple-guide-76ec9d838d0f
       - name: Terraform Outputs
         id: outputs
         run: |
           JSON=$(terraform output -json | jq -r '.')
-          echo $JSON
           S3_BUCKET_NAME=$(echo $JSON | jq -r '.s3_bucket_name.value')
           API_INVOKE_URL=$(echo $JSON | jq -r '.api_invoke_url.value')
-          echo "bucket name: ${S3_BUCKET_NAME}"
-          echo "api invoke url: ${S3_BUCKET_NAME}"
+          S3_SITE_URL=$(echo $JSON | jq -r '.s3_static_site_url.value')
 
-          BINARY_ENCRYPTED_SECRET=$(echo -n "$S3_BUCKET_NAME" | openssl enc -aes-256-cbc -pbkdf2 -salt -k "${{ secrets.ENCRYPTION_PASSWORD }}");
-          ENCRYPTED_S3_BUCKET_NAME=$(echo -n "$BINARY_ENCRYPTED_SECRET" | base64 -w 0);
-          echo $ENCRYPTED_S3_BUCKET_NAME
+          # loop
+          declare -a var=("S3_BUCKET_NAME" "API_INVOKE_URL" "S3_SITE_URL")
+          for var in "${dirs[@]}"; do
+            BINARY_ENCRYPTED_SECRET=$(echo -n "${var}" | openssl enc -aes-256-cbc -pbkdf2 -salt -k "${{ secrets.ENCRYPTION_PASSWORD }}");
+            ENCRYPTED_SECRET=$(echo -n "$BINARY_ENCRYPTED_SECRET" | base64 -w 0);
+            # echo $ENCRYPTED_S3_BUCKET_NAME
 
-          echo "ENCRYPTED_S3_BUCKET_NAME=$ENCRYPTED_S3_BUCKET_NAME" >> $GITHUB_OUTPUT
+            echo "ENCRYPTED_${var}=$ENCRYPTED_SECRET" >> $GITHUB_OUTPUT
+          done
+
+          # echo "bucket name: ${S3_BUCKET_NAME}"
+          # echo "api invoke url: ${S3_BUCKET_NAME}"
+
+          # BINARY_ENCRYPTED_SECRET=$(echo -n "$S3_BUCKET_NAME" | openssl enc -aes-256-cbc -pbkdf2 -salt -k "${{ secrets.ENCRYPTION_PASSWORD }}");
+          # ENCRYPTED_S3_BUCKET_NAME=$(echo -n "$BINARY_ENCRYPTED_SECRET" | base64 -w 0);
+          # echo $ENCRYPTED_S3_BUCKET_NAME
+
+          # echo "ENCRYPTED_S3_BUCKET_NAME=$ENCRYPTED_S3_BUCKET_NAME" >> $GITHUB_OUTPUT
 
       #     echo "S3_BUCKET_NAME=$S3_BUCKET_NAME" >> $GITHUB_OUTPUT
       #     echo "API_INVOKE_URL=${API_INVOKE_URL}" >> $GITHUB_OUTPUT
@@ -219,12 +235,23 @@ jobs:
       - name: Get outputs
         env:
           ENCRYPTED_S3_BUCKET_NAME: ${{ needs.apply.outputs.ENCRYPTED_S3_BUCKET_NAME }}
+          ENCRYPTED_API_INVOKE_URL: ${{ needs.apply.outputs.ENCRYPTED_API_INVOKE_URL }}
+          ENCRYPTED_S3_SITE_URL: ${{ needs.apply.outputs.ENCRYPTED_S3_SITE_URL }}
         #   API_INVOKE_URL: ${{ needs.apply.outputs.API_INVOKE_URL }}
         run: |
           echo $ENCRYPTED_S3_BUCKET_NAME
           BINARY_DENCRYPTED_S3_BUCKET_NAME=$(echo -n "$ENCRYPTED_S3_BUCKET_NAME" | base64 --decode);
           S3_BUCKET_NAME=$(echo -n "$BINARY_DENCRYPTED_S3_BUCKET_NAME" | openssl enc -aes-256-cbc -pbkdf2 -d -salt -k "${{ secrets.ENCRYPTION_PASSWORD }}");
+
+          BINARY_DENCRYPTED_API_INVOKE_URL=$(echo -n "$ENCRYPTED_API_INVOKE_URL" | base64 --decode);
+          API_INVOKE_URL=$(echo -n "$BINARY_DENCRYPTED_S3_BUCKET_NAME" | openssl enc -aes-256-cbc -pbkdf2 -d -salt -k "${{ secrets.ENCRYPTION_PASSWORD }}");
+
+          BINARY_DENCRYPTED_S3_SITE_URL=$(echo -n "$ENCRYPTED_S3_SITE_URL" | base64 --decode);
+          S3_SITE_URL=$(echo -n "$BINARY_DENCRYPTED_S3_SITE_URL" | openssl enc -aes-256-cbc -pbkdf2 -d -salt -k "${{ secrets.ENCRYPTION_PASSWORD }}");
+          
           echo $S3_BUCKET_NAME
+          echo $API_INVOKE_URL
+          echo $S3_SITE_URL
   #     - name: Configure AWS credentials from AWS account
   #       uses: aws-actions/configure-aws-credentials@v1
   #       with:
