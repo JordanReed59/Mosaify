@@ -175,8 +175,8 @@ jobs:
       - name: Terraform Outputs
         id: outputs
         run: |
-          terraform output -raw s3_bucket_name
-          export S3_BUCKET_NAME="$(terraform output -raw s3_bucket_name)"
+          terraform output s3_bucket_name
+          export S3_BUCKET_NAME="$(terraform output s3_bucket_name)"
           echo "the bucket name: ${S3_BUCKET_NAME}"
           echo "S3_BUCKET_NAME=${S3_BUCKET_NAME}" >> $GITHUB_OUTPUT
 
