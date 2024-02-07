@@ -105,6 +105,7 @@ jobs:
         working-directory: .aws/terraform
     outputs:
       S3_BUCKET_NAME: ${{ steps.outputs.outputs.S3_BUCKET_NAME }}
+      API_INVOKE_URL: ${{ steps.outputs.outputs.API_INVOKE_URL }}
     steps:
       - name: Git checkout
         uses: actions/checkout@v3
@@ -176,16 +177,14 @@ jobs:
       - name: Terraform Outputs
         id: outputs
         run: |
-
-          # terraform output s3_bucket_name
-          # export TEST=$(terraform output s3_bucket_name)
-          # echo $TEST
           JSON=$(terraform output -json | jq -r '.')
           echo $JSON
-          export S3_BUCKET_NAME=$(echo $JSON | jq -r '.s3_bucket_name.value')
-          echo "the bucket name: ${S3_BUCKET_NAME}"
-          TEST=hello
-          echo "S3_BUCKET_NAME=${TEST}" >> $GITHUB_OUTPUT
+          S3_BUCKET_NAME=$(echo $JSON | jq -r '.s3_bucket_name.value')
+          API_INVOKE_URL=$(echo $JSON | jq -r '.api_invoke_url.value')
+          echo "bucket name: ${S3_BUCKET_NAME}"
+          echo "api invoke url: ${S3_BUCKET_NAME}"
+          echo "S3_BUCKET_NAME=${S3_BUCKET_NAME}" >> $GITHUB_OUTPUT
+          echo "API_INVOKE_URL=${API_INVOKE_URL}" >> $GITHUB_OUTPUT
       #     grep --version
       #     jq --version
       #     terraform output -json
@@ -213,6 +212,7 @@ jobs:
       - name: Get outputs
         env:
           S3_BUCKET_NAME: ${{ needs.apply.outputs.S3_BUCKET_NAME }}
+          API_INVOKE_URL: ${{ needs.apply.outputs.API_INVOKE_URL }}
         run: |
           echo "$S3_BUCKET_NAME"
 
