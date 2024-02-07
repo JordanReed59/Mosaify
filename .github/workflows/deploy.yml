@@ -103,6 +103,8 @@ jobs:
       run:
         shell: bash
         working-directory: .aws/terraform
+    outputs:
+      tag: ${{ steps.outputs.outputs.TEST }}
     steps:
       - name: Git checkout
         uses: actions/checkout@v3
@@ -175,7 +177,7 @@ jobs:
         run: |
           export S3_BUCKET_NAME=$(terraform output s3_bucket_name)
           echo "the bucket name: ${S3_BUCKET_NAME}"
-          echo "TAG=Hello" >> $GITHUB_OUTPUT
+          echo "TEST=Hello" >> $GITHUB_OUTPUT
 
   post-deploy:
     needs: [plan, apply]
@@ -190,9 +192,10 @@ jobs:
         uses: actions/checkout@v3
 
       - name: Get outputs
+        env:
+          TEST: ${{needs.apply.outputs.test}}
         run: |
-          export TAG=${{ needs.apply.steps.outputs.outputs.TAG }}
-          echo "$TAG"
+          echo "$TEST"
 
 
   #     - name: Configure AWS credentials from AWS account
