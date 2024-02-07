@@ -6,7 +6,7 @@ const SpotifyAuth = () => {
   const [accessToken, setAccessToken] = useState(null);
   const clientId = process.env.REACT_APP_CLIENT_ID;
   const redirectUri = process.env.REACT_APP_REDIRECT_URI;
-
+  const apiUrl = process.env.REACT_APP_API_URL;
   const scope = 'user-read-private user-read-email';
   const authUrl = new URL("https://accounts.spotify.com/authorize");
   const tokenUrl = "https://accounts.spotify.com/api/token"
