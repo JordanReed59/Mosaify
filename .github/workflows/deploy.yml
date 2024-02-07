@@ -182,9 +182,14 @@ jobs:
           S3_BUCKET_NAME=$(echo $JSON | jq -r '.s3_bucket_name.value')
           API_INVOKE_URL=$(echo $JSON | jq -r '.api_invoke_url.value')
           echo "bucket name: ${S3_BUCKET_NAME}"
-          echo "api invoke url: ${S3_BUCKET_NAME}"
-          echo "S3_BUCKET_NAME=$S3_BUCKET_NAME" >> $GITHUB_OUTPUT
-          echo "API_INVOKE_URL=${API_INVOKE_URL}" >> $GITHUB_OUTPUT
+          echo "api invoke url: ${S3_BUCKET_NAME}"]
+          
+          BINARY_ENCRYPTED_SECRET=$(echo -n "$S3_BUCKET_NAME" | openssl enc -aes-256-cbc -pbkdf2 -salt -k "${{ secrets.ENCRYPTION_PASSWORD }}");
+          ENCRYPTED_S3_BUCKET_NAME=$(echo -n "$BINARY_ENCRYPTED_SECRET" | base64);
+          echo $ENCRYPTED_S3_BUCKET_NAME
+
+      #     echo "S3_BUCKET_NAME=$S3_BUCKET_NAME" >> $GITHUB_OUTPUT
+      #     echo "API_INVOKE_URL=${API_INVOKE_URL}" >> $GITHUB_OUTPUT
       #     grep --version
       #     jq --version
       #     terraform output -json
@@ -209,12 +214,12 @@ jobs:
       - name: Git checkout
         uses: actions/checkout@v3
 
-      - name: Get outputs
-        env:
-          S3_BUCKET_NAME: ${{ needs.apply.outputs.S3_BUCKET_NAME }}
-          API_INVOKE_URL: ${{ needs.apply.outputs.API_INVOKE_URL }}
-        run: |
-          echo "$S3_BUCKET_NAME"
+      # - name: Get outputs
+      #   env:
+      #     S3_BUCKET_NAME: ${{ needs.apply.outputs.S3_BUCKET_NAME }}
+      #     API_INVOKE_URL: ${{ needs.apply.outputs.API_INVOKE_URL }}
+      #   run: |
+      #     echo "$S3_BUCKET_NAME"
 
   #     - name: Configure AWS credentials from AWS account
   #       uses: aws-actions/configure-aws-credentials@v1
