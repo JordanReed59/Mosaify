@@ -167,24 +167,31 @@ jobs:
           echo "TF_VAR_region=${AWS_REGION}" >> $GITHUB_ENV
 
       - name: Terraform Apply
+        id: apply
         run: terraform apply -auto-approve -input=false
 
       - name: Terraform Outputs
+        id: outputs
         run: |
           export S3_BUCKET_NAME=$(terraform output s3_bucket_name)
           echo "the bucket name: ${S3_BUCKET_NAME}"
+          echo "TAG=Hello" >> $GITHUB_OUTPUT
 
-  # post-deploy:
-  #   needs: [plan, apply]
-  #   runs-on: ubuntu-latest
-  #   defaults:
-  #     run:
-  #       shell: bash
-  #       working-directory: src/frontend/mosaify
+  post-deploy:
+    needs: [plan, apply]
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        shell: bash
+        working-directory: src/frontend/mosaify
 
-  #   steps:
-  #     - name: Git checkout
-  #       uses: actions/checkout@v3
+    steps:
+      - name: Get outputs
+        run: |
+          echo ${{ needs.apply.steps.outputs.outputs.TAG }}
+
+      - name: Git checkout
+        uses: actions/checkout@v3
 
   #     - name: Configure AWS credentials from AWS account
   #       uses: aws-actions/configure-aws-credentials@v1
