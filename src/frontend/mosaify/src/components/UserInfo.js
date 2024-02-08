@@ -16,6 +16,7 @@ const UserInfo = ({ accessToken }) => {
      .then(response => {
         setUserDisplayName(response.data.display_name)
         setuserImageUrl(response.data.images[0].url)
+        // create 64x64 blank user image to use if the image array has a length of 0
         console.log(userImageUrl)
      }) 
      .catch(err => {
