@@ -2,8 +2,8 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import CryptoJS from 'crypto-js';
 
-const SpotifyAuth = () => {
-  const [accessToken, setAccessToken] = useState(null);
+const SpotifyAuth = ({ onLogin }) => {
+  // const [accessToken, setAccessToken] = useState(null);
   const clientId = process.env.REACT_APP_CLIENT_ID;
   const redirectUri = process.env.REACT_APP_REDIRECT_URI;
   const apiUrl = process.env.REACT_APP_API_URL;
@@ -77,10 +77,9 @@ const SpotifyAuth = () => {
 
       const response = await fetch(tokenUrl, payload);
       const data = await response.json();
-      // localStorage.setItem('access_token', data.access_token);
       console.log(`Access token: ${data.access_token}`)
-      setAccessToken(data.access_token);
-      // console.log(localStorage.getItem('access_token'))
+      // setAccessToken(data.access_token);
+      onLogin(data.access_token);
     } catch (error) {
       console.error('Error fetching token:', error);
     }
@@ -89,13 +88,19 @@ const SpotifyAuth = () => {
   return (
     <div>
       <h2>Login to Spotify</h2>
-      {accessToken ? (
-        <p>Access Token: {accessToken}</p>
-      ) : (
-        <button onClick={handleAuthorization}>Authorize with Spotify</button>
-      )}
+      <button onClick={handleAuthorization}>Authorize with Spotify</button>
     </div>
   );
+  // return (
+  //   <div>
+  //     <h2>Login to Spotify</h2>
+  //     {accessToken ? (
+  //       <p>Access Token: {accessToken}</p>
+  //     ) : (
+  //       <button onClick={handleAuthorization}>Authorize with Spotify</button>
+  //     )}
+  //   </div>
+  // );
 };
 
 export default SpotifyAuth;
