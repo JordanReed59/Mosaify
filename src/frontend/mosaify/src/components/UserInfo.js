@@ -15,7 +15,7 @@ const UserInfo = ({ accessToken }) => {
      })
      .then(response => {
         setUserDisplayName(response.data.display_name)
-        setuserImageUrl(response.data.images[1].url)
+        setuserImageUrl(response.data.images[0].url)
         console.log(userImageUrl)
      }) 
      .catch(err => {
