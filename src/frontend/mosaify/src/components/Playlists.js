@@ -39,8 +39,6 @@ const Playlists = ({ accessToken }) => {
         // var test = document.createElement("p");
         // div.setAttribute('className', 'Playlist-container');
         // div.setAttribute('src', imageUrl);
-
-        // var 
     };
     setPlaylists(playlistArray)
     }) 
