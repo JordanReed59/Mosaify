@@ -23,7 +23,7 @@ const UserInfo = ({ accessToken }) => {
      });
     return (
         <div>
-            <h2> Welcome ${userDisplayName}</h2>
+            <h1> Welcome {userDisplayName}</h1>
             <img src="${userImageUrl}"/>
         </div>
     );
