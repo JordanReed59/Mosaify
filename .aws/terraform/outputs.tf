@@ -25,3 +25,15 @@ output "function_uris" {
     "mosaify" = aws_lambda_function.mosaify_lambda.invoke_arn
   }
 }
+
+output "s3_bucket_name" {
+  value = aws_s3_bucket.static_site_bucket.id
+}
+
+output "s3_static_site_url" {
+  value = aws_s3_bucket_website_configuration.static_site_bucket.website_endpoint
+}
+
+output "api_invoke_url" {
+  value = "todo"
+}

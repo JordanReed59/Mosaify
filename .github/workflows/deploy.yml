@@ -137,7 +137,7 @@ jobs:
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v2
         with:
-          terraform_version: 1.2.5
+          terraform_version: 1.7.2
 
       - name: Terraform fmt
         id: fmt
@@ -182,6 +182,10 @@ jobs:
       run:
         shell: bash
         working-directory: .aws/terraform
+    outputs:
+      ENCRYPTED_S3_BUCKET_NAME: ${{ steps.outputs.outputs.ENCRYPTED_S3_BUCKET_NAME }}
+      ENCRYPTED_API_INVOKE_URL: ${{ steps.outputs.outputs.ENCRYPTED_API_INVOKE_URL }}
+      ENCRYPTED_S3_SITE_URL: ${{ steps.outputs.outputs.ENCRYPTED_S3_SITE_URL }}
     steps:
       - name: Git checkout
         uses: actions/checkout@v3
@@ -222,7 +226,8 @@ jobs:
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v2
         with:
-          terraform_version: 1.2.5
+          terraform_version: 1.7.2
+          terraform_wrapper: false
 
       - name: Terraform Init
         id: init
@@ -252,4 +257,112 @@ jobs:
           echo "TF_VAR_region=${AWS_REGION}" >> $GITHUB_ENV
 
       - name: Terraform Apply
+        id: apply
         run: terraform apply -auto-approve -input=false
+
+      # This step takes the tf outputs and saves them to the outputs of this step allowing them to be used by sequential jobs.
+      # In order to do this I saved json of tf output to variable and extracted the neccassary values
+      # Since github sees these values as secrets and it wouldn't let me pass them in the outputs I encrpyted them using openssl and base64 
+        # Ref: https://medium.com/@adel.muhandes/securely-passing-secrets-between-github-action-jobs-a-simple-guide-76ec9d838d0f
+      - name: Terraform Outputs
+        id: outputs
+        run: |
+          JSON=$(terraform output -json | jq -r '.')
+          S3_BUCKET_NAME=$(echo $JSON | jq -r '.s3_bucket_name.value')
+          API_INVOKE_URL=$(echo $JSON | jq -r '.api_invoke_url.value')
+          S3_SITE_URL=$(echo $JSON | jq -r '.s3_static_site_url.value')
+
+          BINARY_ENCRYPTED_S3_BUCKET_NAME=$(echo -n "$S3_BUCKET_NAME" | openssl enc -aes-256-cbc -pbkdf2 -salt -k "${{ secrets.ENCRYPTION_PASSWORD }}");
+          ENCRYPTED_S3_BUCKET_NAME=$(echo -n "$BINARY_ENCRYPTED_S3_BUCKET_NAME" | base64 -w 0);
+          echo "ENCRYPTED_S3_BUCKET_NAME=$ENCRYPTED_S3_BUCKET_NAME" >> $GITHUB_OUTPUT
+
+          BINARY_ENCRYPTED_API_INVOKE_URL=$(echo -n "$API_INVOKE_URL" | openssl enc -aes-256-cbc -pbkdf2 -salt -k "${{ secrets.ENCRYPTION_PASSWORD }}");
+          ENCRYPTED_API_INVOKE_URL=$(echo -n "$BINARY_ENCRYPTED_API_INVOKE_URL" | base64 -w 0);
+          echo "ENCRYPTED_API_INVOKE_URL=$ENCRYPTED_API_INVOKE_URL" >> $GITHUB_OUTPUT
+
+          BINARY_ENCRYPTED_S3_SITE_URL=$(echo -n "$S3_SITE_URL" | openssl enc -aes-256-cbc -pbkdf2 -salt -k "${{ secrets.ENCRYPTION_PASSWORD }}");
+          ENCRYPTED_S3_SITE_URL=$(echo -n "$BINARY_ENCRYPTED_S3_SITE_URL" | base64 -w 0);
+          echo "ENCRYPTED_S3_SITE_URL=$ENCRYPTED_S3_SITE_URL" >> $GITHUB_OUTPUT
+
+  post-deploy:
+    needs: [plan, apply]
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        shell: bash
+        working-directory: src/frontend/mosaify
+
+    steps:
+      - name: Git checkout
+        uses: actions/checkout@v3
+
+      - name: Get outputs
+        env:
+          ENCRYPTED_S3_BUCKET_NAME: ${{ needs.apply.outputs.ENCRYPTED_S3_BUCKET_NAME }}
+          ENCRYPTED_API_INVOKE_URL: ${{ needs.apply.outputs.ENCRYPTED_API_INVOKE_URL }}
+          ENCRYPTED_S3_SITE_URL: ${{ needs.apply.outputs.ENCRYPTED_S3_SITE_URL }}
+        run: |
+          echo "Bucket Name"
+          BINARY_DENCRYPTED_S3_BUCKET_NAME=$(echo -n "$ENCRYPTED_S3_BUCKET_NAME" | base64 --decode);
+          S3_BUCKET_NAME=$(echo -n "$BINARY_DENCRYPTED_S3_BUCKET_NAME" | openssl enc -aes-256-cbc -pbkdf2 -d -salt -k "${{ secrets.ENCRYPTION_PASSWORD }}");
+
+          echo "API URL"
+          BINARY_DENCRYPTED_API_INVOKE_URL=$(echo -n "$ENCRYPTED_API_INVOKE_URL" | base64 --decode);
+          API_INVOKE_URL=$(echo -n "$BINARY_DENCRYPTED_API_INVOKE_URL" | openssl enc -aes-256-cbc -pbkdf2 -d -salt -k "${{ secrets.ENCRYPTION_PASSWORD }}");
+
+          echo "S3 URL"
+          BINARY_DENCRYPTED_S3_SITE_URL=$(echo -n "$ENCRYPTED_S3_SITE_URL" | base64 --decode);
+          S3_SITE_URL=$(echo -n "$BINARY_DENCRYPTED_S3_SITE_URL" | openssl enc -aes-256-cbc -pbkdf2 -d -salt -k "${{ secrets.ENCRYPTION_PASSWORD }}");
+
+          echo "S3_BUCKET_NAME=${S3_BUCKET_NAME}" >> $GITHUB_ENV
+          echo "API_INVOKE_URL=${API_INVOKE_URL}" >> $GITHUB_ENV
+          echo "S3_SITE_URL=${S3_SITE_URL}" >> $GITHUB_ENV
+
+      - name: Set ENV variables
+        run: |
+          echo "REPO_NAME=${GITHUB_REPOSITORY#$GITHUB_REPOSITORY_OWNER/}" >> $GITHUB_ENV
+          if [[ $GITHUB_REF == refs/heads/main ]]; then
+            echo "Using QA Role"
+            echo "AWS_ROLE=${{ secrets.AWS_QA_ROLE }}" >> $GITHUB_ENV
+            echo "ENV=qa" >> $GITHUB_ENV
+          elif [[ $GITHUB_REF == refs/heads/develop ]]; then
+            echo "Using Test Role"
+            echo "AWS_ROLE=${{ secrets.AWS_TEST_ROLE }}" >> $GITHUB_ENV
+            echo "ENV=test" >> $GITHUB_ENV
+          elif [[ $GITHUB_REF == refs/heads/feature/* || $GITHUB_REF == refs/heads/bugfix/* || $GITHUB_REF == refs/heads/task/* || $GITHUB_REF == refs/heads/hotfix/* ]]; then
+            echo "Using Dev Role"
+            echo "AWS_ROLE=${{ secrets.AWS_DEV_ROLE }}" >> $GITHUB_ENV
+            echo "ENV=dev" >> $GITHUB_ENV
+          else
+            echo "Invalid branch name. Stopping the action."
+            exit 1
+          fi
+          
+      - name: Configure AWS credentials from AWS account
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          role-to-assume: ${{ env.AWS_ROLE }}
+          aws-region: ${{ env.AWS_REGION }}
+          role-session-name: GitHub-OIDC-TERRAFORM
+
+      - name: Setup Node
+        uses: actions/setup-node@v3
+        with:
+          node-version: '21.x'
+
+      - name: Add .env
+        run: |
+          touch .env
+          echo 'REACT_APP_CLIENT_ID = ${{ secrets.SPOTIFY_CLIENT_ID }}' >> .env
+          echo 'REACT_APP_REDIRECT_URI = http://${{ env.S3_SITE_URL }}' >> .env
+          echo 'REACT_APP_API_URL = ${{ env.API_INVOKE_URL }}' >> .env
+          cat .env
+
+      - name: Install node
+        run: npm install
+
+      - name: Build node app
+        run: npm run build
+
+      - name: Copy files to the test website with the AWS CLI
+        run: aws s3 sync ./build s3://${{ env.S3_BUCKET_NAME }}
