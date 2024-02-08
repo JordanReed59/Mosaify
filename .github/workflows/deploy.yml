@@ -18,7 +18,80 @@ env:
   GITHUB_BRANCH_NAME: ${{ github.ref_name }}
 
 jobs:
+  build:
+      runs-on: ubuntu-latest
+      defaults:
+        run:
+          shell: bash
+          working-directory: src/backend
+      steps:
+        - name: Git checkout
+          uses: actions/checkout@v3
+
+        - name: Setup python
+          uses: actions/setup-python@v4
+          with:
+            python-version: '3.12'
+
+        # - name: Install python dependencies
+        #   run: |
+        #     pip install --quiet -r ./auth/requirements.txt -t auth_python
+        #     pip install --quiet -r ./url/requirements.txt -t url_python
+        #     pip install --quiet -r ./mosaify/requirements.txt -t mosaify_python
+        #     pip install --quiet -r ./option/requirements.txt -t option_python
+
+        # - name: Zip python dependencies
+        #   run: |
+        #     mkdir -p zips
+        #     cd auth_python
+        #     zip -q -r -g ../zips/auth.zip .
+        #     cd ..
+        #     cd url_python
+        #     zip -q -r -g ../zips/url.zip .
+        #     cd ..
+        #     cd mosaify_python
+        #     zip -q -r -g ../zips/mosaify.zip .
+        #     cd ..
+        #     cd option_python
+        #     zip -q -r -g ../zips/option.zip .
+
+        # - name: Add source code to python dependencies zip
+        #   run: |
+        #     cd ./auth
+        #     zip -q -g ../zips/auth.zip auth.py
+        #     cd ..
+        #     cd ./url
+        #     zip -q -g ../zips/url.zip url.py
+        #     cd ..
+        #     cd ./mosaify
+        #     zip -q -g ../zips/mosaify.zip mosaify.py
+        #     cd ..
+        #     cd ./option
+        #     zip -q -g ../zips/option.zip option.py
+
+        - name: Install and package Python dependencies
+          run: |
+            mkdir -p zips
+            declare -a dirs=("auth" "url" "mosaify" "option")
+            for dir in "${dirs[@]}"; do
+              pip install --quiet -r "./${dir}/requirements.txt" -t "${dir}_python"
+              cd "${dir}_python" || exit
+              zip -q -r -g "../zips/${dir}.zip" .
+              cd ..
+              cd "${dir}" || exit
+              zip -q -g "../zips/${dir}.zip" "${dir}.py"
+              cd ..
+            done
+
+        - name: Upload artifact for deployment job
+          uses: actions/upload-artifact@v2
+          with:
+            name: python_deployment
+            path: src/backend/zips
+            if-no-files-found: error
+            
   plan:
+    needs: build
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -47,6 +120,12 @@ jobs:
             echo "Invalid branch name. Stopping the action."
             exit 1
           fi
+
+      - name: Download artifact from build job
+        uses: actions/download-artifact@v2
+        with:
+          name: python_deployment
+          path: .aws/terraform/zips
 
       - name: Configure AWS credentials from AWS account
         uses: aws-actions/configure-aws-credentials@v1
@@ -97,7 +176,7 @@ jobs:
         run: exit 1
 
   apply:
-    needs: plan
+    needs: [build, plan]
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -126,6 +205,12 @@ jobs:
             echo "Invalid branch name. Stopping the action."
             exit 1
           fi
+      
+      - name: Download artifact from build job
+        uses: actions/download-artifact@v2
+        with:
+          name: python_deployment
+          path: .aws/terraform/zips
 
       - name: Configure AWS credentials from AWS account
         uses: aws-actions/configure-aws-credentials@v1
