@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import './App.css';
 import SpotifyAuth from './components/SpotifyAuth';
 import UserInfo from './components/UserInfo';
+import Playlists from './components/Playlists';
 
 function App() {
   const [accessToken, setAccessToken] = useState(null);
@@ -17,6 +18,7 @@ function App() {
       ) : (
         <div>
           <UserInfo accessToken={accessToken}/>
+          <Playlists accessToken={accessToken}/>
           {/* <h1>Logged In</h1>
           <p>Access Token: {accessToken}</p> */}
         </div>
