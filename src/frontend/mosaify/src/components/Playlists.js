@@ -64,7 +64,6 @@ const Playlists = ({ accessToken }) => {
             <ul id="playlists">{listItems}</ul>
         </div>
     );
-
 };
 
 export default Playlists;
