@@ -35,5 +35,5 @@ output "s3_static_site_url" {
 }
 
 output "api_invoke_url" {
-  value = "todo"
+  value = aws_api_gateway_deployment.deploy_api.invoke_url
 }
