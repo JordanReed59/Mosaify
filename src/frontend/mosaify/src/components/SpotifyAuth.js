@@ -6,7 +6,6 @@ const SpotifyAuth = ({ onLogin }) => {
   // const [accessToken, setAccessToken] = useState(null);
   const clientId = process.env.REACT_APP_CLIENT_ID;
   const redirectUri = process.env.REACT_APP_REDIRECT_URI;
-  const apiUrl = process.env.REACT_APP_API_URL;
   const scope = 'user-read-private user-read-email';
   const authUrl = new URL("https://accounts.spotify.com/authorize");
   const tokenUrl = "https://accounts.spotify.com/api/token"
@@ -14,10 +13,10 @@ const SpotifyAuth = ({ onLogin }) => {
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search);
     const code = urlParams.get('code');
-    console.log("I only fire once")
+    // console.log("I only fire once")
 
     if (code) {
-      console.log(`Getting Token using auth code: ${code}`)
+      // console.log(`Getting Token using auth code: ${code}`)
       getToken(code);
     }
   }, []);
@@ -25,8 +24,8 @@ const SpotifyAuth = ({ onLogin }) => {
   const handleAuthorization = () => {
     const codeVerifier = generateRandomString(128);
     const codeChallenge = base64URL(CryptoJS.SHA256(codeVerifier));
-    console.log(codeVerifier);
-    console.log(codeChallenge);
+    // console.log(codeVerifier);
+    // console.log(codeChallenge);
     window.localStorage.setItem('code_verifier', codeVerifier);
 
     const params = {
@@ -77,7 +76,7 @@ const SpotifyAuth = ({ onLogin }) => {
 
       const response = await fetch(tokenUrl, payload);
       const data = await response.json();
-      console.log(`Access token: ${data.access_token}`)
+      // console.log(`Access token: ${data.access_token}`)
       // setAccessToken(data.access_token);
       onLogin(data.access_token);
     } catch (error) {
