@@ -16,7 +16,6 @@ const SpotifyAuth = ({ onLogin }) => {
     // console.log("I only fire once")
 
     if (code) {
-      // console.log(`Getting Token using auth code: ${code}`)
       getToken(code);
     }
   }, []);
