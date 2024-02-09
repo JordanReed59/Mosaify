@@ -23,15 +23,6 @@ function App() {
       )}
     </div>
   );
-
-  // return (
-    // <div className="App">
-    //   <header className="App-header">
-    //     {/* <ApiRequestComponent/> */}
-    //     <SpotifyAuth/>
-    //   </header>
-    // </div>
-  // );
 }
 
 export default App;
