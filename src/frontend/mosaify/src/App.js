@@ -19,8 +19,6 @@ function App() {
         <div>
           <UserInfo accessToken={accessToken}/>
           <Playlists accessToken={accessToken}/>
-          {/* <h1>Logged In</h1>
-          <p>Access Token: {accessToken}</p> */}
         </div>
       )}
     </div>
