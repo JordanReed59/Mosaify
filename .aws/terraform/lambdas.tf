@@ -156,7 +156,8 @@ resource "aws_lambda_function" "mosaify_lambda" {
 #   depends_on = [aws_iam_role_policy_attachment.attach_iam_policy_to_iam_role]
   environment {
     variables = {
-      BUCKET_NAME = "foobar"
+      UPLOAD_BUCKET_NAME = "	mosaify-dev-feature-mos-5-image-upload-bucket",
+      DOWNLOAD_BUCKET_NAME = "mosaify-dev-feature-mos-5-image-download-bucket"
     }
   }
   
