@@ -158,7 +158,7 @@ resource "aws_lambda_function" "mosaify_lambda" {
   source_code_hash = filebase64sha256("${path.module}/zips/mosaify.zip")
   environment {
     variables = {
-      UPLOAD_BUCKET_NAME = "	mosaify-dev-feature-mos-5-image-upload-bucket",
+      UPLOAD_BUCKET_NAME = "mosaify-dev-feature-mos-5-image-upload-bucket",
       DOWNLOAD_BUCKET_NAME = "mosaify-dev-feature-mos-5-image-download-bucket"
     }
   }
