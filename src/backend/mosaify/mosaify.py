@@ -42,6 +42,23 @@ def resize_image(imgArr, scale):
     print(resizedImage.shape)
     return resizedImage
 
+def upload_to_s3(key, fileArr):
+    try:
+        print(f"Uploading {key} to {DOWNLOAD_BUCKET_NAME} bucket")
+        temp = tempfile.TemporaryFile()
+        fileArr.tofile(temp)
+        temp.seek(0)
+        s3_client = boto3.client('s3')
+        s3_client.upload_fileobj(temp, DOWNLOAD_BUCKET_NAME, key)
+
+        # url = generate_presigned_url(s3_client, bucket, key, 600)
+        temp.close()
+
+        # return url
+
+    except Exception as e:
+        print(e)
+
 def lambda_handler(event, context):
     print(event)
     # body = json.loads(event['body'])
@@ -53,6 +70,9 @@ def lambda_handler(event, context):
 
     imgArr = download_image(key)
     print(imgArr.shape)
+
+    resizedImgArr = resize_image(imgArr, 50)
+    upload_to_s3(key, resizedImgArr)
 
     # height = imgArr.shape[0]
     # width = imgArr.shape[1]
