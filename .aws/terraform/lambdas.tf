@@ -206,6 +206,18 @@ data "aws_iam_policy_document" "mosaify_role_policy" {
       "logs:PutLogEvents",
     ]
   }
+  statement {
+    sid       =  "GetObject"
+    effect    =  "Allow"
+    actions   =  ["s3:GetObject"]
+    resources =  ["arn:aws:s3:::mosaify-dev-feature-mos-5-image-upload-bucket", "arn:aws:s3:::mosaify-dev-feature-mos-5-image-upload-bucket/*"]
+  }
+  statement {
+    sid       =  "PutObject"
+    effect    =  "Allow"
+    actions   =  ["s3:PutObject"]
+    resources =  ["arn:aws:s3:::mosaify-dev-feature-mos-5-image-download-bucket", "arn:aws:s3:::mosaify-dev-feature-mos-5-image-download-bucket/*"]
+  }
 }
 ############### End Mosaify Lambda ###############
 
