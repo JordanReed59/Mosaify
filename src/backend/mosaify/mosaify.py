@@ -32,7 +32,8 @@ def download_image(key):
 
 def lambda_handler(event, context):
     print(event)
-    body = json.loads(event['body'])
+    # body = json.loads(event['body'])
+    body = event['body']
     key = body['key']
     uris = body['uris']
     print(key)

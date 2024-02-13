@@ -3,12 +3,13 @@
 resource "aws_lambda_function" "auth_lambda" {
   # If the file is not in the current working directory you will need to include a
   # path.module in the filename.
-  filename      = "${path.module}/zips/auth.zip"
-  function_name = "${module.namespace.namespace}-auth"
-  handler       = "auth.lambda_handler"
-  role          = aws_iam_role.auth_lambda_role.arn
-  runtime       = "python3.12"
-  memory_size   = 128
+  filename         = "${path.module}/zips/auth.zip"
+  function_name    = "${module.namespace.namespace}-auth"
+  handler          = "auth.lambda_handler"
+  role             = aws_iam_role.auth_lambda_role.arn
+  runtime          = "python3.12"
+  memory_size      = 128
+  tags             = module.namespace.tags
   source_code_hash = filebase64sha256("${path.module}/zips/auth.zip")
 #   depends_on = [aws_iam_role_policy_attachment.attach_iam_policy_to_iam_role]
   environment {
@@ -78,12 +79,13 @@ data "aws_iam_policy_document" "auth_role_policy" {
 resource "aws_lambda_function" "url_lambda" {
   # If the file is not in the current working directory you will need to include a
   # path.module in the filename.
-  filename      = "${path.module}/zips/auth.zip"
-  function_name = "${module.namespace.namespace}-url"
-  handler       = "url.lambda_handler"
-  role          = aws_iam_role.url_lambda_role.arn
-  runtime       = "python3.12"
-  memory_size   = 128
+  filename         = "${path.module}/zips/auth.zip"
+  function_name    = "${module.namespace.namespace}-url"
+  handler          = "url.lambda_handler"
+  role             = aws_iam_role.url_lambda_role.arn
+  runtime          = "python3.12"
+  memory_size      = 128
+  tags             = module.namespace.tags
   source_code_hash = filebase64sha256("${path.module}/zips/url.zip")
 #   depends_on = [aws_iam_role_policy_attachment.attach_iam_policy_to_iam_role]
   environment {
@@ -146,14 +148,14 @@ data "aws_iam_policy_document" "url_role_policy" {
 resource "aws_lambda_function" "mosaify_lambda" {
   # If the file is not in the current working directory you will need to include a
   # path.module in the filename.
-  filename      = "${path.module}/zips/mosaify.zip"
-  function_name = "${module.namespace.namespace}-mosaify"
-  handler       = "mosaify.lambda_handler"
-  role          = aws_iam_role.mosaify_lambda_role.arn
-  runtime       = "python3.12"
-  memory_size   = 128
+  filename         = "${path.module}/zips/mosaify.zip"
+  function_name    = "${module.namespace.namespace}-mosaify"
+  handler          = "mosaify.lambda_handler"
+  role             = aws_iam_role.mosaify_lambda_role.arn
+  runtime          = "python3.12"
+  memory_size      = 128
+  tags             = module.namespace.tags
   source_code_hash = filebase64sha256("${path.module}/zips/mosaify.zip")
-#   depends_on = [aws_iam_role_policy_attachment.attach_iam_policy_to_iam_role]
   environment {
     variables = {
       UPLOAD_BUCKET_NAME = "	mosaify-dev-feature-mos-5-image-upload-bucket",
@@ -226,12 +228,13 @@ data "aws_iam_policy_document" "mosaify_role_policy" {
 resource "aws_lambda_function" "option_lambda" {
   # If the file is not in the current working directory you will need to include a
   # path.module in the filename.
-  filename      = "${path.module}/zips/option.zip"
-  function_name = "${module.namespace.namespace}-option"
-  handler       = "option.lambda_handler"
-  role          = aws_iam_role.option_lambda_role.arn
-  runtime       = "python3.12"
-  memory_size   = 128
+  filename         = "${path.module}/zips/option.zip"
+  function_name    = "${module.namespace.namespace}-option"
+  handler          = "option.lambda_handler"
+  role             = aws_iam_role.option_lambda_role.arn
+  runtime          = "python3.12"
+  memory_size      = 128
+  tags             = module.namespace.tags
   source_code_hash = filebase64sha256("${path.module}/zips/option.zip")
 }
 
