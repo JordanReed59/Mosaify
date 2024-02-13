@@ -155,6 +155,7 @@ resource "aws_lambda_function" "mosaify_lambda" {
   runtime          = "python3.12"
   memory_size      = 128
   tags             = module.namespace.tags
+  timeout          = 300
   source_code_hash = filebase64sha256("${path.module}/zips/mosaify.zip")
   environment {
     variables = {
