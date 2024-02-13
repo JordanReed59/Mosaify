@@ -26,8 +26,8 @@ def download_image(key):
 
         response = s3_client.get_object(Bucket=UPLOAD_BUCKET_NAME, Key=key)
         metadata = response['Metadata']
-        height = metadata['height']
-        width = metadata['width']
+        height = int(metadata['height'])
+        width = int(metadata['width'])
         channels = 3
         # Download image file to a temporary file
         with tempfile.TemporaryFile() as temp:
