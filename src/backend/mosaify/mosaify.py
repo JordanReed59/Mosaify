@@ -42,6 +42,9 @@ def lambda_handler(event, context):
     imgArr = download_image(key)
     print(imgArr.shape)
 
+    height = imgArr.shape[0]
+    width = imgArr.shape[1]
+    print(width, height)
     # url = generate_presigned_url(key)
     response = {}
     response['statusCode'] = 200
