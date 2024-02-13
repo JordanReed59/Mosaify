@@ -5,6 +5,7 @@ import tempfile
 import numpy as np
 
 from botocore.exceptions import ClientError
+from PIL import Image
 
 UPLOAD_BUCKET_NAME = os.environ.get('UPLOAD_BUCKET_NAME')
 DOWNLOAD_BUCKET_NAME = os.environ.get('DOWNLOAD_BUCKET_NAME')
@@ -24,25 +25,30 @@ def download_image(key):
         # # close temp file
         # temp.close()
 
-        response = s3_client.get_object(Bucket=UPLOAD_BUCKET_NAME, Key=key)
-        metadata = response['Metadata']
-        height = int(metadata['height'])
-        width = int(metadata['width'])
-        channels = 3
+        # response = s3_client.get_object(Bucket=UPLOAD_BUCKET_NAME, Key=key)
+        # metadata = response['Metadata']
+        # height = int(metadata['height'])
+        # width = int(metadata['width'])
+        # channels = 3
         # Download image file to a temporary file
         with tempfile.TemporaryFile() as temp:
-            try:
-                s3_client.download_fileobj(UPLOAD_BUCKET_NAME, key, temp)
-                temp.seek(0)
+            # try:
+            s3_client.download_fileobj(UPLOAD_BUCKET_NAME, key, temp)
+            temp.seek(0)
+
+            img = Image.open(temp)
+        
+        # Convert the image to a numpy array
+            imageArr = np.array(img)
                 
                 # Read the image data from the temporary file
-                image_data = temp.read()
-                imageArr = np.frombuffer(image_data, dtype=np.uint8)
-                imageArr = imageArr.reshape((height, width, channels))
+                # image_data = temp.read()
+                # imageArr = np.frombuffer(image_data, dtype=np.uint8)
+                # imageArr = imageArr.reshape((height, width, channels))
                 
-            except Exception as e:
-                print(f"ERROR downloading {key} file object from {UPLOAD_BUCKET_NAME} bucket")
-                raise e
+            # except Exception as e:
+            #     print(f"ERROR downloading {key} file object from {UPLOAD_BUCKET_NAME} bucket")
+            #     raise e
 
         return imageArr
 
