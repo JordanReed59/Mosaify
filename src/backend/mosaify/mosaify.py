@@ -33,6 +33,10 @@ def download_image(key):
             image_data = temp.read()
             imageArr = np.frombuffer(image_data, dtype=np.uint8)
 
+            response = s3_client.get_object(Bucket=UPLOAD_BUCKET_NAME, Key=key)
+            metadata = response['Metadata']
+            print(metadata)
+
         return imageArr
 
     except Exception as e:
