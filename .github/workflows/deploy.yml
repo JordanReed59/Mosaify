@@ -42,6 +42,7 @@ jobs:
             exit 1
           fi
   plan:
+    needs: [variables]
     runs-on: ubuntu-latest
     defaults:
       run:
