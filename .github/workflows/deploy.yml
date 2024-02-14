@@ -23,7 +23,7 @@ jobs:
     defaults:
       run:
         shell: bash
-        working-directory: ./
+        working-directory: $GITHUB_WORKSPACE
     steps:
       - name: Git checkout
         uses: actions/checkout@v3
