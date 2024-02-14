@@ -47,7 +47,7 @@ jobs:
               echo "Invalid branch name. Stopping the action."
               exit 1
             fi
-            echo $GREETING
+            echo ${{ env.GREETING }}
 
       - name: Setup python
         uses: actions/setup-python@v4
