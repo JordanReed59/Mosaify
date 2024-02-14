@@ -50,7 +50,6 @@ jobs:
             fi
 
       - name: Configure AWS credentials from AWS account
-          if: steps.filter.outputs.backend == 'true'
           uses: aws-actions/configure-aws-credentials@v1
           with:
             role-to-assume: ${{ env.AWS_ROLE }}
