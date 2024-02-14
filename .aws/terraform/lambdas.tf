@@ -167,7 +167,7 @@ resource "aws_lambda_function" "mosaify_lambda" {
   function_name    = "${module.namespace.namespace}-mosaify"
   role             = aws_iam_role.mosaify_lambda_role.arn
   package_type     = "Image"
-  image_uri        = "${aws_ecr_repository.repo.repository_url}:mosaify"
+  image_uri        = data.aws_ecr_image.mosaify_image.image_uri
   memory_size      = 128
   tags             = module.namespace.tags
   timeout          = 300
