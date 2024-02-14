@@ -73,6 +73,7 @@ jobs:
           declare -a dirs=("mosaify")
           for dir in "${dirs[@]}"; do
             docker build -t $REGISTRY/${REPO_NAME,,}:$dir "./${dir}"
+            docker push $REGISTRY/${REPO_NAME,,}:$dir
           done
 
       - name: Setup python
@@ -83,7 +84,7 @@ jobs:
       - name: Install and package Python dependencies
         run: |
           mkdir -p zips
-          declare -a dirs=("auth" "url" "mosaify" "option")
+          declare -a dirs=("auth" "url" "option")
           for dir in "${dirs[@]}"; do
             pip install --quiet -r "./${dir}/requirements.txt" -t "${dir}_python"
             cd "${dir}_python" || exit

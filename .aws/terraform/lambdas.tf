@@ -6,12 +6,7 @@ resource "aws_ecr_repository" "repo" {
   image_scanning_configuration {
     scan_on_push = true
   }
-} 
-
-# data "aws_ecr_image" "lambda_image" {
-#   repository_name = aws_ecr_repository.repo.name
-#   image_tag       = "latest"
-# }
+}
 
 ############### Begin Access Token Lambda ###############
 # lambda config
@@ -159,19 +154,24 @@ data "aws_iam_policy_document" "url_role_policy" {
 
 
 ############### Begin Mosaify Lambda ###############
+# image
+data "aws_ecr_image" "mosaify_image" {
+  repository_name = aws_ecr_repository.repo.name
+  image_tag       = "mosaify"
+}
+
 # lambda config
 resource "aws_lambda_function" "mosaify_lambda" {
   # If the file is not in the current working directory you will need to include a
   # path.module in the filename.
-  filename         = "${path.module}/zips/mosaify.zip"
   function_name    = "${module.namespace.namespace}-mosaify"
-  handler          = "mosaify.lambda_handler"
   role             = aws_iam_role.mosaify_lambda_role.arn
-  runtime          = "python3.12"
+  package_type     = "Image"
+  image_uri        = "${aws_ecr_repository.repo.repository_url}:mosaify"
   memory_size      = 128
   tags             = module.namespace.tags
   timeout          = 300
-  source_code_hash = filebase64sha256("${path.module}/zips/mosaify.zip")
+  source_code_hash = trimprefix(data.aws_ecr_image.mosaify_image.id, "sha256:")
   environment {
     variables = {
       UPLOAD_BUCKET_NAME = "mosaify-dev-feature-mos-5-image-upload-bucket",
