@@ -29,6 +29,7 @@ jobs:
         uses: actions/checkout@v3
       - name: Variables
         run: |
+            echo WORKSPACE_NAME=$(python ../../.github/workflows/utils/branch_mapping.py "$GITHUB_BRANCH_NAME") >> $GITHUB_ENV
             echo "GREETING=Hello" >> $GITHUB_ENV
             echo "REPO_NAME=${GITHUB_REPOSITORY#$GITHUB_REPOSITORY_OWNER/}" >> $GITHUB_ENV
             if [[ $GITHUB_REF == refs/heads/main ]]; then
@@ -47,6 +48,16 @@ jobs:
               echo "Invalid branch name. Stopping the action."
               exit 1
             fi
+
+      - name: Build and Push Images to ECR
+        env:
+          REPO_NAME: ${{ env.REPO_NAME }}
+          ENV: ${{ env.ENV }}
+          WORKSPACE_NAME: ${{ env.WORKSPACE_NAME }}
+        run: |
+          echo $REPO_NAME
+          echo $ENV
+          echo $WORKSPACE_NAME
 
       - name: Setup python
         uses: actions/setup-python@v4
