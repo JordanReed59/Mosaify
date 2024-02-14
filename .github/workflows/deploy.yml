@@ -25,6 +25,9 @@ jobs:
         shell: bash
         working-directory: ./
     steps:
+      steps:
+      - name: Git checkout
+        uses: actions/checkout@v3
       - name: Set ENV variables
         run: |
           echo "REPO_NAME=${GITHUB_REPOSITORY#$GITHUB_REPOSITORY_OWNER/}" >> vars.txt
