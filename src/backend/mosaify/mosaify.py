@@ -1,9 +1,11 @@
+import PIL
 import boto3
 import json
 import os
 import tempfile
 import cv2
 import numpy as np
+# import PIL
 
 from botocore.exceptions import ClientError
 from PIL import Image
@@ -43,16 +45,24 @@ def resize_image(imgArr, scale):
     return resizedImage
 
 def upload_to_s3(key, fileArr):
+    print(f"Uploading {key} to {DOWNLOAD_BUCKET_NAME} bucket")
     try:
-        print(f"Uploading {key} to {DOWNLOAD_BUCKET_NAME} bucket")
-        temp = tempfile.TemporaryFile()
-        fileArr.tofile(temp)
-        temp.seek(0)
         s3_client = boto3.client('s3')
-        s3_client.upload_fileobj(temp, DOWNLOAD_BUCKET_NAME, key)
+        pil_image = PIL.fromarray(fileArr) 
+        with tempfile.TemporaryFile() as temp:
+            pil_image.save(temp, format=key.split('.')[1])
+            temp.seek(0)
+
+            s3_client.upload_fileobj(temp.name, DOWNLOAD_BUCKET_NAME, key)
+
+        # temp = tempfile.TemporaryFile()
+        # fileArr.tofile(temp)
+        # temp.seek(0)
+        # s3_client = boto3.client('s3')
+        # s3_client.upload_fileobj(temp, DOWNLOAD_BUCKET_NAME, key)
 
         # url = generate_presigned_url(s3_client, bucket, key, 600)
-        temp.close()
+        # temp.close()
 
         # return url
 
