@@ -23,7 +23,7 @@ jobs:
     defaults:
       run:
         shell: bash
-        # working-directory: .aws/terraform
+        working-directory: ./
     steps:
       - name: Set ENV variables
         run: |
