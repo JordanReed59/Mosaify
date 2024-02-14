@@ -67,6 +67,7 @@ jobs:
           REPO_NAME: ${{ env.REPO_NAME }}
           ENV: ${{ env.ENV }}
           WORKSPACE_NAME: ${{ env.WORKSPACE_NAME }}
+          REGISTRY: ${{ steps.login-ecr.outputs.registry }}
         run: |
           LOWER_BRANCH_NAME=${GITHUB_BRANCH_NAME,,}
           echo ${REPO_NAME,,}-$ENV-${LOWER_BRANCH_NAME//'/'/'-'}-container-repo
