@@ -57,10 +57,10 @@ jobs:
           aws-region: ${{ env.AWS_REGION }}
           role-session-name: GitHub-OIDC-TERRAFORM
 
-        - name: Login to AWS ECR
-          if: steps.filter.outputs.backend == 'true'
-          id: login-ecr
-          uses: aws-actions/amazon-ecr-login@v1
+      - name: Login to AWS ECR
+        if: steps.filter.outputs.backend == 'true'
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v1
 
       - name: Build and Push Images to ECR
         env:
