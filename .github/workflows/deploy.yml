@@ -72,7 +72,7 @@ jobs:
           echo ${REPO_NAME,,}-$ENV-${LOWER_BRANCH_NAME//'/'/'-'}-container-repo
           declare -a dirs=("mosaify")
           for dir in "${dirs[@]}"; do
-            docker build -t $REGISTRY/$REPO_NAME:$dir "./${dir}"
+            docker build -t $REGISTRY/${REPO_NAME,,}:$dir "./${dir}"
           done
 
       - name: Setup python
