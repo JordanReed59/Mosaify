@@ -69,11 +69,11 @@ jobs:
           REGISTRY: ${{ steps.login-ecr.outputs.registry }}
         run: |
           LOWER_BRANCH_NAME=${GITHUB_BRANCH_NAME,,}
-          echo ${REPO_NAME,,}-$ENV-${LOWER_BRANCH_NAME//'/'/'-'}-container-repo
+          ECR_REPO_NAME=${REPO_NAME,,}-$ENV-${LOWER_BRANCH_NAME//'/'/'-'}-container-repo
           declare -a dirs=("mosaify")
           for dir in "${dirs[@]}"; do
-            docker build -t $REGISTRY/${REPO_NAME,,}:$dir "./${dir}"
-            docker push $REGISTRY/${REPO_NAME,,}:$dir
+            docker build -t $REGISTRY/$ECR_REPO_NAME:$dir "./${dir}"
+            docker push $REGISTRY/$ECR_REPO_NAME:$dir
           done
 
       - name: Setup python
