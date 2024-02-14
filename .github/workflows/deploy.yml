@@ -46,7 +46,7 @@ jobs:
               echo "Invalid branch name. Stopping the action."
               exit 1
             fi
-            echo ${REPO_NAME,,}
+            echo ${REPO_NAME}
 
       - name: Setup python
         uses: actions/setup-python@v4
