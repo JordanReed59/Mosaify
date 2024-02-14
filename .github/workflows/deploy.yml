@@ -27,6 +27,7 @@ jobs:
     steps:
       - name: Git checkout
         uses: actions/checkout@v3
+
       - name: Variables
         run: |
             echo WORKSPACE_NAME=$(python ../../.github/workflows/utils/branch_mapping.py "$GITHUB_BRANCH_NAME") >> $GITHUB_ENV
@@ -50,11 +51,11 @@ jobs:
             fi
 
       - name: Configure AWS credentials from AWS account
-          uses: aws-actions/configure-aws-credentials@v1
-          with:
-            role-to-assume: ${{ env.AWS_ROLE }}
-            aws-region: ${{ env.AWS_REGION }}
-            role-session-name: GitHub-OIDC-TERRAFORM
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          role-to-assume: ${{ env.AWS_ROLE }}
+          aws-region: ${{ env.AWS_REGION }}
+          role-session-name: GitHub-OIDC-TERRAFORM
 
         - name: Login to AWS ECR
           if: steps.filter.outputs.backend == 'true'
