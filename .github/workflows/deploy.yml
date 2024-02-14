@@ -47,7 +47,6 @@ jobs:
               echo "Invalid branch name. Stopping the action."
               exit 1
             fi
-            echo ${{ env.GREETING }}
 
       - name: Setup python
         uses: actions/setup-python@v4
@@ -55,7 +54,10 @@ jobs:
           python-version: '3.12'
 
       - name: Install and package Python dependencies
+        env:
+            GREETING: ${{ env.GREETING }}
         run: |
+          echo $GREETING
           mkdir -p zips
           declare -a dirs=("auth" "url" "mosaify" "option")
           for dir in "${dirs[@]}"; do
