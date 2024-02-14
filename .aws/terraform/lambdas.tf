@@ -8,6 +8,9 @@ resource "aws_ecr_repository" "repo" {
   }
 }
 
+# lifecycle policies for untagged images
+
+
 ############### Begin Access Token Lambda ###############
 # lambda config
 resource "aws_lambda_function" "auth_lambda" {

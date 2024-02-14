@@ -1,11 +1,9 @@
-import PIL
 import boto3
 import json
 import os
 import tempfile
 import cv2
 import numpy as np
-# import PIL
 
 from botocore.exceptions import ClientError
 from PIL import Image
@@ -48,7 +46,7 @@ def upload_to_s3(key, fileArr):
     print(f"Uploading {key} to {DOWNLOAD_BUCKET_NAME} bucket")
     try:
         s3_client = boto3.client('s3')
-        pil_image = PIL.fromarray(fileArr) 
+        pil_image = Image.fromarray(fileArr) 
         with tempfile.TemporaryFile() as temp:
             pil_image.save(temp, format=key.split('.')[1])
             temp.seek(0)
