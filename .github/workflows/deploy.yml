@@ -55,7 +55,7 @@ jobs:
           ENV: ${{ env.ENV }}
           WORKSPACE_NAME: ${{ env.WORKSPACE_NAME }}
         run: |
-          echo ${REPO_NAME,,}-$ENV-$WORKSPACE_NAME-container-repo
+          echo ${REPO_NAME,,}-$ENV-${WORKSPACE_NAME,,}-container-repo
 
       - name: Setup python
         uses: actions/setup-python@v4
