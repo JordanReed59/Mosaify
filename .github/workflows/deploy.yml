@@ -44,22 +44,21 @@ jobs:
             exit 1
           fi
           ls
+          cat vars.txt
   plan:
     needs: [variables]
     runs-on: ubuntu-latest
     defaults:
       run:
         shell: bash
-        working-directory: .aws/terraform
+        working-directory: ${{ github.workspace }}
     steps:
       - name: Git checkout
         uses: actions/checkout@v3
 
       - name: Get ENV Vars
         run: |
-          ls ../../
-          source ../../vars.txt
-          echo $AWS_ROLE
+          ls
 
 
   #     - name: Git checkout
