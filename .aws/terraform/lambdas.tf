@@ -1,3 +1,18 @@
+############### Create Container Repo ###############
+resource "aws_ecr_repository" "repo" {
+  name                 = "${module.namespace.namespace}-container-repo"
+  image_tag_mutability = "MUTABLE"
+  force_delete         = true
+  image_scanning_configuration {
+    scan_on_push = true
+  }
+} 
+
+# data "aws_ecr_image" "lambda_image" {
+#   repository_name = aws_ecr_repository.repo.name
+#   image_tag       = "latest"
+# }
+
 ############### Begin Access Token Lambda ###############
 # lambda config
 resource "aws_lambda_function" "auth_lambda" {
