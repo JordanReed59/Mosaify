@@ -51,7 +51,7 @@ def upload_to_s3(key, fileArr):
             pil_image.save(temp, format=key.split('.')[1])
             temp.seek(0)
 
-            s3_client.upload_fileobj(temp.name, DOWNLOAD_BUCKET_NAME, key)
+            s3_client.upload_fileobj(temp, DOWNLOAD_BUCKET_NAME, key)
 
         # temp = tempfile.TemporaryFile()
         # fileArr.tofile(temp)
