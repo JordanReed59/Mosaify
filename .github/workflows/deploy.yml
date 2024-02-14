@@ -57,6 +57,7 @@ jobs:
 
       - name: Get ENV Vars
         run: |
+          ls ../../
           source ../../vars.txt
           echo $AWS_ROLE
 
