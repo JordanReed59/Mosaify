@@ -57,7 +57,7 @@ jobs:
         env:
             GREETING: ${{ env.GREETING }}
         run: |
-          echo $GREETING
+          echo ${GREETING,,}
           mkdir -p zips
           declare -a dirs=("auth" "url" "mosaify" "option")
           for dir in "${dirs[@]}"; do
