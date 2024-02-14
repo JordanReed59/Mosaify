@@ -25,7 +25,6 @@ jobs:
         shell: bash
         working-directory: ./
     steps:
-      steps:
       - name: Git checkout
         uses: actions/checkout@v3
       - name: Set ENV variables
