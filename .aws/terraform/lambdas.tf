@@ -14,7 +14,7 @@ resource "aws_ecr_lifecycle_policy" "lifecycle_policy" {
   policy     = data.aws_iam_policy_document.ecr_policy.json
 }
 
-resource "aws_iam_policy_document" "ecr_policy" {
+data "aws_iam_policy_document" "ecr_policy" {
   statement {
     sid       = "ExpireImages"
     actions   = ["ecr:BatchDeleteImage"]
@@ -23,6 +23,7 @@ resource "aws_iam_policy_document" "ecr_policy" {
     condition {
       test     = "Null"
       variable = "ecr:ResourceTag"
+      values   = [ "" ]
     }
 
     condition {
