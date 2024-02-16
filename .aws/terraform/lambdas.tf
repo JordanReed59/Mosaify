@@ -9,6 +9,29 @@ resource "aws_ecr_repository" "repo" {
 }
 
 # lifecycle policies for untagged images
+resource "aws_ecr_lifecycle_policy" "lifecycle_policy" {
+  repository = aws_ecr_repository.repo.name
+  policy     = data.aws_iam_policy_document.ecr_policy.json
+}
+
+resource "aws_iam_policy_document" "ecr_policy" {
+  statement {
+    sid       = "ExpireImages"
+    actions   = ["ecr:BatchDeleteImage"]
+    resources = [aws_ecr_repository.repo.arn]
+
+    condition {
+      test     = "Null"
+      variable = "ecr:ResourceTag"
+    }
+
+    condition {
+      test     = "NumericGreaterThanEquals"
+      variable = "ecr:ImageAgeInDays"
+      values   = ["1"]
+    }
+  }
+}
 
 
 ############### Begin Access Token Lambda ###############
