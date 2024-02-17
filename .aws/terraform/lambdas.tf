@@ -120,7 +120,7 @@ resource "aws_lambda_function" "url_lambda" {
   handler          = "url.lambda_handler"
   role             = aws_iam_role.url_lambda_role.arn
   runtime          = "python3.12"
-  memory_size      = 512
+  memory_size      = 128
   tags             = module.namespace.tags
   source_code_hash = filebase64sha256("${path.module}/zips/url.zip")
 #   depends_on = [aws_iam_role_policy_attachment.attach_iam_policy_to_iam_role]
@@ -194,7 +194,7 @@ resource "aws_lambda_function" "mosaify_lambda" {
   role             = aws_iam_role.mosaify_lambda_role.arn
   package_type     = "Image"
   image_uri        = data.aws_ecr_image.mosaify_image.image_uri
-  memory_size      = 128
+  memory_size      = 512
   tags             = module.namespace.tags
   timeout          = 300
   source_code_hash = trimprefix(data.aws_ecr_image.mosaify_image.id, "sha256:")
@@ -259,7 +259,7 @@ data "aws_iam_policy_document" "mosaify_role_policy" {
   statement {
     sid       =  "PutObject"
     effect    =  "Allow"
-    actions   =  ["s3:PutObject"]
+    actions   =  ["s3:PutObject", "s3:GetObject"]
     resources =  ["arn:aws:s3:::mosaify-dev-feature-mos-5-image-download-bucket", "arn:aws:s3:::mosaify-dev-feature-mos-5-image-download-bucket/*"]
   }
 }
