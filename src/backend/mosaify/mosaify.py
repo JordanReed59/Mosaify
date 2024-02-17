@@ -109,5 +109,6 @@ def lambda_handler(event, context):
         'Access-Control-Allow-Origin': origin
     }
     response['body'] = json.dumps({'url' : presignedUrl})
+    print(response)
 
     return response
