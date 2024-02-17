@@ -9,29 +9,28 @@ resource "aws_ecr_repository" "repo" {
 }
 
 # lifecycle policies for untagged images
-resource "aws_ecr_lifecycle_policy" "lifecycle_policy" {
+resource "aws_ecr_lifecycle_policy" "foopolicy" {
   repository = aws_ecr_repository.repo.name
-  policy     = data.aws_iam_policy_document.ecr_policy.json
+
+  policy = <<EOF
+{
+    "rules": [
+        {
+            "rulePriority": 1,
+            "description": "Expire images older than 14 days",
+            "selection": {
+                "tagStatus": "untagged",
+                "countType": "sinceImagePushed",
+                "countUnit": "days",
+                "countNumber": 14
+            },
+            "action": {
+                "type": "expire"
+            }
+        }
+    ]
 }
-
-data "aws_iam_policy_document" "ecr_policy" {
-  statement {
-    sid       = "ExpireImages"
-    actions   = ["ecr:BatchDeleteImage"]
-    resources = [aws_ecr_repository.repo.arn]
-
-    condition {
-      test     = "Null"
-      variable = "ecr:ResourceTag"
-      values   = [ "" ]
-    }
-
-    condition {
-      test     = "NumericGreaterThanEquals"
-      variable = "ecr:ImageAgeInDays"
-      values   = ["1"]
-    }
-  }
+EOF
 }
 
 
