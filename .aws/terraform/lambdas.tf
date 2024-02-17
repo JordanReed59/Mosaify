@@ -22,7 +22,7 @@ resource "aws_ecr_lifecycle_policy" "foopolicy" {
                 "tagStatus": "untagged",
                 "countType": "sinceImagePushed",
                 "countUnit": "days",
-                "countNumber": 14
+                "countNumber": 1
             },
             "action": {
                 "type": "expire"
@@ -120,7 +120,7 @@ resource "aws_lambda_function" "url_lambda" {
   handler          = "url.lambda_handler"
   role             = aws_iam_role.url_lambda_role.arn
   runtime          = "python3.12"
-  memory_size      = 128
+  memory_size      = 512
   tags             = module.namespace.tags
   source_code_hash = filebase64sha256("${path.module}/zips/url.zip")
 #   depends_on = [aws_iam_role_policy_attachment.attach_iam_policy_to_iam_role]
