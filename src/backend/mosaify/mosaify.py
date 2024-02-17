@@ -78,7 +78,7 @@ def upload_to_s3(key, fileArr):
 
 def lambda_handler(event, context):
     print(event)
-    if type(body) == str:
+    if type(event['body']) == str:
         body = json.loads(event['body'])
 
     else:
