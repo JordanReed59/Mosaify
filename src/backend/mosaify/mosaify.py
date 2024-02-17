@@ -99,11 +99,15 @@ def lambda_handler(event, context):
     # width = imgArr.shape[1]
     # print(width, height)
     # url = generate_presigned_url(key)
+    origin = "*"
+    if "origin" in event["headers"]:
+        origin = event["headers"]["origin"]
     response = {}
     response['statusCode'] = 200
     response['headers'] = {
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json; charset=utf-8',
+        'Access-Control-Allow-Origin': origin
     }
-    response['body'] = {'url' : presignedUrl}
+    response['body'] = {'url' : json.dumps(presignedUrl)}
 
     return response
