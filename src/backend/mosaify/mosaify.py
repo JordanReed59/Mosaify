@@ -42,6 +42,20 @@ def resize_image(imgArr, scale):
     print(resizedImage.shape)
     return resizedImage
 
+"""
+Generate a presigned Amazon S3 URL that can be used to download file
+"""
+def generate_presigned_url(s3_client, key, expires_in=300):
+    try:
+        url = s3_client.generate_presigned_url(
+            ClientMethod="get_object", Params={"Bucket": DOWNLOAD_BUCKET_NAME, "Key": key}, ExpiresIn=expires_in
+        )
+        print(f"Got presigned URL: {url}")
+        return url
+    except Exception as e:
+        print("ERROR generating presigned URL")
+        raise(e)
+
 def upload_to_s3(key, fileArr):
     print(f"Uploading {key} to {DOWNLOAD_BUCKET_NAME} bucket")
     try:
@@ -53,19 +67,14 @@ def upload_to_s3(key, fileArr):
 
             s3_client.upload_fileobj(temp, DOWNLOAD_BUCKET_NAME, key)
 
-        # temp = tempfile.TemporaryFile()
-        # fileArr.tofile(temp)
-        # temp.seek(0)
-        # s3_client = boto3.client('s3')
-        # s3_client.upload_fileobj(temp, DOWNLOAD_BUCKET_NAME, key)
-
-        # url = generate_presigned_url(s3_client, bucket, key, 600)
-        # temp.close()
-
-        # return url
-
     except Exception as e:
-        print(e)
+        print(f"Error uploading {key} to {DOWNLOAD_BUCKET_NAME}")
+        raise(e)
+
+    else:
+        print(f"Successfully uploaded {key} to {DOWNLOAD_BUCKET_NAME}")
+        return generate_presigned_url(s3_client, key)
+
 
 def lambda_handler(event, context):
     print(event)
@@ -80,7 +89,7 @@ def lambda_handler(event, context):
     print(imgArr.shape)
 
     resizedImgArr = resize_image(imgArr, 50)
-    upload_to_s3(key, resizedImgArr)
+    presignedUrl = upload_to_s3(key, resizedImgArr)
 
     # height = imgArr.shape[0]
     # width = imgArr.shape[1]
@@ -91,6 +100,6 @@ def lambda_handler(event, context):
     response['headers'] = {
         'Content-Type': 'application/json'
     }
-    response['body'] = {'msg' : "Hello from mosaify lambda"}
+    response['body'] = {'url' : presignedUrl}
 
     return response
