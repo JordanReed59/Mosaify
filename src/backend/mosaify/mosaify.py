@@ -108,6 +108,6 @@ def lambda_handler(event, context):
         'Content-Type': 'application/json; charset=utf-8',
         'Access-Control-Allow-Origin': origin
     }
-    response['body'] = {'url' : json.dumps(presignedUrl)}
+    response['body'] = json.dumps({'url' : presignedUrl})
 
     return response
