@@ -78,8 +78,12 @@ def upload_to_s3(key, fileArr):
 
 def lambda_handler(event, context):
     print(event)
-    # body = json.loads(event['body'])
-    body = event['body']
+    if type(body) == str:
+        body = json.loads(event['body'])
+
+    else:
+        body = event['body']
+
     key = body['key']
     uris = body['uris']
     print(key)
