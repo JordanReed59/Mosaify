@@ -139,7 +139,7 @@ resource "aws_api_gateway_integration" "url_post_lambda" {
   uri                     = "arn:aws:apigateway:${var.region}:lambda:path/2015-03-31/functions/arn:aws:lambda:${var.region}:${local.account_id}:function:mosaify-dev-feature-mos-2-url/invocations"
 }
 
-resource "aws_lambda_permission" "apigw_lambda" {
+resource "aws_lambda_permission" "apigw_url_lambda" {
   statement_id  = "AllowExecutionFromAPIGateway"
   action        = "lambda:InvokeFunction"
   function_name = "mosaify-dev-feature-mos-2-url"
