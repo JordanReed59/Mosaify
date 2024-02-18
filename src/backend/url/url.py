@@ -21,15 +21,27 @@ def generate_presigned_url(key, expires_in=300):
 
 def lambda_handler(event, context):
     print(event)
-    # body = json.loads(event['body'])
-    # key = body['key']
+    if type(event['body']) == str:
+        body = json.loads(event['body'])
 
-    # url = generate_presigned_url(key)
+    else:
+        body = event['body']
+
+    key = body['key']
+
+    url = generate_presigned_url(key)
+
+    origin = "*"
+    if "origin" in event["headers"]:
+        origin = event["headers"]["origin"]
+    
     response = {}
     response['statusCode'] = 200
     response['headers'] = {
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
+        'Access-Control-Allow-Origin': origin
     }
-    response['body'] = {'msg' : "Hello from url lambda"}
+    response['body'] = json.dumps({'url' : url})
 
+    print(response)
     return response

@@ -88,7 +88,7 @@ resource "aws_lambda_function" "url_lambda" {
 #   depends_on = [aws_iam_role_policy_attachment.attach_iam_policy_to_iam_role]
   environment {
     variables = {
-      BUCKET_NAME = "foobar"
+      BUCKET_NAME = "mosaify-dev-feature-mos-5-image-upload-bucket"
     }
   }
   
@@ -136,6 +136,12 @@ data "aws_iam_policy_document" "url_role_policy" {
       "logs:CreateLogStream",
       "logs:PutLogEvents",
     ]
+  }
+  statement {
+    sid       =  "PutObject"
+    effect    =  "Allow"
+    actions   =  ["s3:PutObject"]
+    resources =  ["arn:aws:s3:::mosaify-dev-feature-mos-5-image-upload-bucket", "arn:aws:s3:::mosaify-dev-feature-mos-5-image-upload-bucket/*"]
   }
 }
 ############### End Pre-signed URL Lambda ###############
