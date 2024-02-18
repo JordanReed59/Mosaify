@@ -78,7 +78,7 @@ data "aws_iam_policy_document" "auth_role_policy" {
 resource "aws_lambda_function" "url_lambda" {
   # If the file is not in the current working directory you will need to include a
   # path.module in the filename.
-  filename      = "${path.module}/zips/auth.zip"
+  filename      = "${path.module}/zips/url.zip"
   function_name = "${module.namespace.namespace}-url"
   handler       = "url.lambda_handler"
   role          = aws_iam_role.url_lambda_role.arn
