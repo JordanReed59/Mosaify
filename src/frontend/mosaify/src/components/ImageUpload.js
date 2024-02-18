@@ -6,7 +6,7 @@ const ImageUpload = () => {
 
     const getUploadUrl = (imageName) => {
         const apiUrl = process.env.REACT_APP_API_URL;
-        const endpint = "/url"
+        const endpoint = "/dev/url"
         const body = {
             "key": imageName
         }
@@ -15,7 +15,7 @@ const ImageUpload = () => {
           }
 
         axios({
-            url: apiUrl + endpint,
+            url: endpoint,
             method: 'post',
             headers: headers,
             data: body
