@@ -27,5 +27,5 @@ output "s3_static_site_url" {
 }
 
 output "api_invoke_url" {
-  value = "todo"
+  value = "https://wzvx2xundk.execute-api.us-east-1.amazonaws.com/dev"
 }
