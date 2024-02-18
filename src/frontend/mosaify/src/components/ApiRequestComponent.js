@@ -1,6 +1,9 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 
+// don't need because the spotify auth handles authentication all in the front end
+// can eventaully remove
+
 const ApiRequestComponent = () => {
   const [responseMsg, setResponseMsg] = useState(null);
   const [error, setError] = useState(null);
