@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 
+// allow user to select iamge
 const ImageUpload = () => {
-    // allow user to select iamge
 
     const getUploadUrl = (imageName) => {
         const apiUrl = process.env.REACT_APP_API_URL + "/url";
