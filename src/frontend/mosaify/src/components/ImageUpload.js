@@ -15,7 +15,7 @@ const ImageUpload = () => {
           }
 
         axios({
-            url: endpoint,
+            url: apiUrl,
             method: 'post',
             headers: headers,
             data: body
