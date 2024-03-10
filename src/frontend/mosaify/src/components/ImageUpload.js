@@ -3,7 +3,6 @@ import axios from 'axios';
 
 // allow user to select iamge
 const ImageUpload = () => {
-
     const getUploadUrl = (imageName) => {
         const apiUrl = process.env.REACT_APP_API_URL + "/url";
         const endpoint = "/dev/url"
