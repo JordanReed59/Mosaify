@@ -5,7 +5,7 @@ const ImageUpload = () => {
     // allow user to select iamge
 
     const getUploadUrl = (imageName) => {
-        const apiUrl = process.env.REACT_APP_API_URL;
+        const apiUrl = process.env.REACT_APP_API_URL + "/url";
         const endpoint = "/dev/url"
         const body = {
             "key": imageName
