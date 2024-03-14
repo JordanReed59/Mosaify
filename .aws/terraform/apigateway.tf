@@ -1,9 +1,11 @@
 locals {
   options_lambda_uri = "arn:aws:apigateway:${var.region}:lambda:path/2015-03-31/functions/arn:aws:lambda:${var.region}:${local.account_id}:function:mosaify-dev-feature-mos-2-option/invocations"
   auth_lambda_uri = "arn:aws:apigateway:${var.region}:lambda:path/2015-03-31/functions/arn:aws:lambda:${var.region}:${local.account_id}:function:mosaify-dev-feature-mos-2-auth/invocations"
+  url_lambda_uri = "arn:aws:apigateway:${var.region}:lambda:path/2015-03-31/functions/arn:aws:lambda:${var.region}:${local.account_id}:function:mosaify-dev-feature-mos-2-url/invocations"
   mosaify_lambda_uri = "arn:aws:apigateway:${var.region}:lambda:path/2015-03-31/functions/arn:aws:lambda:${var.region}:${local.account_id}:function:mosaify-dev-feature-mos-12-mosaify/invocations"
   options_lambda_name = "mosaify-dev-feature-mos-2-option"
   auth_lambda_name = "mosaify-dev-feature-mos-2-auth"
+  url_lambda_name = "mosaify-dev-feature-mos-2-url"
   mosaify_lambda_name = "mosaify-dev-feature-mos-12-mosaify"
 }
 
@@ -136,13 +138,13 @@ resource "aws_api_gateway_integration" "url_post_lambda" {
 
   integration_http_method = "POST"
   type                    = "AWS_PROXY"
-  uri                     = "arn:aws:apigateway:${var.region}:lambda:path/2015-03-31/functions/arn:aws:lambda:${var.region}:${local.account_id}:function:mosaify-dev-feature-mos-2-url/invocations"
+  uri                     = local.url_lambda_uri
 }
 
 resource "aws_lambda_permission" "apigw_url_lambda" {
   statement_id  = "AllowExecutionFromAPIGateway"
   action        = "lambda:InvokeFunction"
-  function_name = "mosaify-dev-feature-mos-2-url"
+  function_name = local.url_lambda_name
   principal     = "apigateway.amazonaws.com"
 
   # More: http://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-control-access-using-iam-policies-to-invoke-api.html
@@ -195,38 +197,38 @@ resource "aws_lambda_permission" "apigw_url_option_lambda" {
 ################ URL resource ################
 
 ################ Mosaify resource ################
-resource "aws_api_gateway_resource" "mosaify_method_resource" {
-  rest_api_id = "${aws_api_gateway_rest_api.gateway.id}"
-  parent_id   = "${aws_api_gateway_rest_api.gateway.root_resource_id}"
-  path_part   = "mosaify"
-}
+# resource "aws_api_gateway_resource" "mosaify_method_resource" {
+#   rest_api_id = "${aws_api_gateway_rest_api.gateway.id}"
+#   parent_id   = "${aws_api_gateway_rest_api.gateway.root_resource_id}"
+#   path_part   = "mosaify"
+# }
 
-resource "aws_api_gateway_method" "mosaify_post_method" {
-  rest_api_id   = aws_api_gateway_rest_api.gateway.id
-  resource_id   = aws_api_gateway_resource.mosaify_method_resource.id
-  http_method   = "POST"
-  authorization = "NONE"
-}
+# resource "aws_api_gateway_method" "mosaify_post_method" {
+#   rest_api_id   = aws_api_gateway_rest_api.gateway.id
+#   resource_id   = aws_api_gateway_resource.mosaify_method_resource.id
+#   http_method   = "POST"
+#   authorization = "NONE"
+# }
 
-resource "aws_api_gateway_integration" "mosaify_post_lambda" {
-  rest_api_id = "${aws_api_gateway_rest_api.gateway.id}"
-  resource_id = "${aws_api_gateway_method.mosaify_post_method.resource_id}"
-  http_method = "${aws_api_gateway_method.mosaify_post_method.http_method}"
+# resource "aws_api_gateway_integration" "mosaify_post_lambda" {
+#   rest_api_id = "${aws_api_gateway_rest_api.gateway.id}"
+#   resource_id = "${aws_api_gateway_method.mosaify_post_method.resource_id}"
+#   http_method = "${aws_api_gateway_method.mosaify_post_method.http_method}"
 
-  integration_http_method = "POST"
-  type                    = "AWS_PROXY"
-  uri                     = local.mosaify_lambda_uri
-}
+#   integration_http_method = "POST"
+#   type                    = "AWS_PROXY"
+#   uri                     = local.mosaify_lambda_uri
+# }
 
-resource "aws_lambda_permission" "apigw_mosaify_lambda" {
-  statement_id  = "AllowExecutionFromAPIGateway"
-  action        = "lambda:InvokeFunction"
-  function_name = local.mosaify_lambda_name
-  principal     = "apigateway.amazonaws.com"
+# resource "aws_lambda_permission" "apigw_mosaify_lambda" {
+#   statement_id  = "AllowExecutionFromAPIGateway"
+#   action        = "lambda:InvokeFunction"
+#   function_name = local.mosaify_lambda_name
+#   principal     = "apigateway.amazonaws.com"
 
-  # More: http://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-control-access-using-iam-policies-to-invoke-api.html
-  source_arn = "arn:aws:execute-api:${var.region}:${local.account_id}:${aws_api_gateway_rest_api.gateway.id}/*/${aws_api_gateway_method.mosaify_post_method.http_method}${aws_api_gateway_resource.mosaify_method_resource.path}"
-}
+#   # More: http://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-control-access-using-iam-policies-to-invoke-api.html
+#   source_arn = "arn:aws:execute-api:${var.region}:${local.account_id}:${aws_api_gateway_rest_api.gateway.id}/*/${aws_api_gateway_method.mosaify_post_method.http_method}${aws_api_gateway_resource.mosaify_method_resource.path}"
+# }
 ################ Mosaify resource ################
 
 ################ API Deployment ################
