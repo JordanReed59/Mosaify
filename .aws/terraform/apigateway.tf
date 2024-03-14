@@ -190,7 +190,7 @@ resource "aws_lambda_permission" "apigw_url_option_lambda" {
   action        = "lambda:InvokeFunction"
   function_name = local.options_lambda_name
   principal     = "apigateway.amazonaws.com"
-  source_arn = "arn:aws:execute-api:${var.region}:${local.account_id}:${aws_api_gateway_rest_api.gateway.id}/*/${aws_api_gateway_method.option_post_method.http_method}${aws_api_gateway_resource.url_method_resource.path}"
+  source_arn = "arn:aws:execute-api:${var.region}:${local.account_id}:${aws_api_gateway_rest_api.gateway.id}/*/${aws_api_gateway_method.url_option_post_method.http_method}${aws_api_gateway_resource.url_method_resource.path}"
 }
 ################ URL resource ################
 
