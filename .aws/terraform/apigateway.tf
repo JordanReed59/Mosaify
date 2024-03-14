@@ -239,10 +239,10 @@ resource "aws_api_gateway_deployment" "deploy_api" {
     aws_api_gateway_method.auth_post_method,
     aws_api_gateway_integration.auth_post_lambda,
     aws_lambda_permission.apigw_auth_lambda,
-    aws_api_gateway_resource.mosaify_method_resource,
-    aws_api_gateway_method.mosaify_post_method,
-    aws_api_gateway_integration.mosaify_post_lambda,
-    aws_lambda_permission.apigw_mosaify_lambda,
+    # aws_api_gateway_resource.mosaify_method_resource,
+    # aws_api_gateway_method.mosaify_post_method,
+    # aws_api_gateway_integration.mosaify_post_lambda,
+    # aws_lambda_permission.apigw_mosaify_lambda,
     aws_api_gateway_resource.url_method_resource,
     aws_api_gateway_method.url_post_method,
     aws_api_gateway_integration.url_post_lambda,
@@ -250,7 +250,6 @@ resource "aws_api_gateway_deployment" "deploy_api" {
     aws_api_gateway_method.url_option_post_method,
     aws_api_gateway_integration.url_option_post_lambda,
     aws_api_gateway_method_response.url_options_response,
-    # aws_api_gateway_integration_response.options_integration_response,
     aws_lambda_permission.apigw_url_option_lambda
   ]
 
@@ -260,10 +259,10 @@ resource "aws_api_gateway_deployment" "deploy_api" {
       aws_api_gateway_method.auth_post_method.id,
       aws_api_gateway_integration.auth_post_lambda.id,
       aws_lambda_permission.apigw_auth_lambda.id,
-      aws_api_gateway_resource.mosaify_method_resource.id,
-      aws_api_gateway_method.mosaify_post_method.id,
-      aws_api_gateway_integration.mosaify_post_lambda.id,
-      aws_lambda_permission.apigw_mosaify_lambda.id,
+      # aws_api_gateway_resource.mosaify_method_resource.id,
+      # aws_api_gateway_method.mosaify_post_method.id,
+      # aws_api_gateway_integration.mosaify_post_lambda.id,
+      # aws_lambda_permission.apigw_mosaify_lambda.id,
       aws_api_gateway_resource.url_method_resource.id,
       aws_api_gateway_method.url_post_method.id,
       aws_api_gateway_integration.url_post_lambda.id,
@@ -271,7 +270,6 @@ resource "aws_api_gateway_deployment" "deploy_api" {
       aws_api_gateway_method.url_option_post_method.id,
       aws_api_gateway_integration.url_option_post_lambda.id,
       aws_api_gateway_method_response.url_options_response.id,
-      # aws_api_gateway_integration_response.options_integration_response.id,
       aws_lambda_permission.apigw_url_option_lambda.id
     ]))
   }
