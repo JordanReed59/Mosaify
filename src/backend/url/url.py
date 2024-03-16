@@ -15,7 +15,7 @@ def generate_presigned_url(key, contentType, expires_in=300):
             Params={
                 "Bucket": BUCKET_NAME,
                 "Key": key,
-                "Content-Type": contentType
+                "ContentType": contentType
             },
             ExpiresIn=expires_in
         )
