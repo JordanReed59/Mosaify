@@ -10,8 +10,8 @@ const ImageUpload = () => {
   
     const handleFileChange = async (event) => {
       const selectedFile = event.target.files[0];
-      setFile(selectedFile);
-      console.log(event.target.files);
+      // setFile(selectedFile);
+      // console.log(event.target.files);
       console.log(selectedFile);
 
       const imageUrl = URL.createObjectURL(selectedFile);
@@ -30,9 +30,7 @@ const ImageUpload = () => {
         setHash(hashHex);
 
         const newFile = new File([selectedFile], `${hashHex}.${selectedFile.name.split('.').pop()}`, { type: selectedFile.type });
-        // console.log(newFile.name);
         setFile(newFile);
-
         getUploadUrl(newFile.name, newFile.type)
       };
       reader.readAsArrayBuffer(selectedFile);
