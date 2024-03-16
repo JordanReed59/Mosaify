@@ -4,6 +4,7 @@ import SpotifyAuth from './components/SpotifyAuth';
 import UserInfo from './components/UserInfo';
 import Playlists from './components/Playlists';
 import ImageUpload from './components/ImageUpload';
+import Uploader from './components/Test';
 
 function App() {
   const [accessToken, setAccessToken] = useState(null);
@@ -20,7 +21,9 @@ function App() {
 
   return (
     <div className="App">
-      {!accessToken ? (
+      {/* <Uploader/> */}
+      <ImageUpload/>
+      {/* {!accessToken ? (
         <SpotifyAuth onLogin={handleAuthorization}/>
       ) : (
         <div>
@@ -28,7 +31,7 @@ function App() {
           <Playlists accessToken={accessToken}/>
           <ImageUpload/>
         </div>
-      )}
+      )} */}
     </div>
   );
 
