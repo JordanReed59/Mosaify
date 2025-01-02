@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 
-const ImageUpload = () => {
+const ImageUpload = ({ onUpload }) => {
     const [file, setFile] = useState(null);
     const [hash, setHash] = useState(null);
     const [url, setUrl] = useState(null);
@@ -73,6 +73,7 @@ const ImageUpload = () => {
       })
       .then(response => {
       console.log(response)
+      onUpload(newFile.name)
       }) 
       .catch(err => {
       console.log(err);

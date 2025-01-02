@@ -3,7 +3,7 @@ import axios from 'axios';
 import blankUser from '../BlankPlaylistImage.png';
 import '../Playlists.css'
 
-const Playlists = ({ accessToken }) => {
+const Playlists = ({ accessToken, onSelect }) => {
     const [playlists, setPlaylists] = useState(null);
     const [playlistList, setplaylistList] = useState(null);
     const [selectedPlaylistId, setSelectedPlaylistId] = useState(null);
@@ -29,6 +29,7 @@ const Playlists = ({ accessToken }) => {
                 </li>
             );
             setplaylistList(listItems);
+
         }
     }, [playlists]);
 
@@ -57,6 +58,7 @@ const Playlists = ({ accessToken }) => {
             url: item.images.length > 0 ? item.images[2].url : blankUser
         }));
         setPlaylists(playlistArray)
+        onSelect(playlistArray)
         }) 
         .catch(err => {
         console.log(err);
