@@ -29,41 +29,19 @@ jobs:
           with:
             python-version: '3.12'
 
-        - name: Install python dependencies
-          run: |
-            pip install --quiet -r ./auth/requirements.txt -t auth_python
-            pip install --quiet -r ./url/requirements.txt -t url_python
-            pip install --quiet -r ./mosaify/requirements.txt -t mosaify_python
-            pip install --quiet -r ./option/requirements.txt -t option_python
-
-        - name: Zip python dependencies
+        - name: Install and package Python dependencies
           run: |
             mkdir -p zips
-            cd auth
-            zip -q -r -g ../zips/auth.zip .
-            cd ..
-            cd url
-            zip -q -r -g ../zips/url.zip .
-            cd ..
-            cd mosaify
-            zip -q -r -g ../zips/mosaify.zip .
-            cd ..
-            cd option
-            zip -q -r -g ../zips/option.zip .
-
-        - name: Add source code to python dependencies zip
-          run: |
-            cd ./auth
-            zip -q -g ../zips/auth.zip auth.py
-            cd ..
-            cd ./url
-            zip -q -g ../zips/url.zip url.py
-            cd ..
-            cd ./url
-            zip -q -g ../zips/mosaify.zip mosaify.py
-            cd ..
-            cd ./option
-            zip -q -g ../zips/option.zip option.py
+            declare -a dirs=("auth" "url" "mosaify" "option")
+            for dir in "${dirs[@]}"; do
+              pip install --quiet -r "./${dir}/requirements.txt" -t "${dir}_python"
+              cd "${dir}_python" || exit
+              zip -q -r -g "../zips/${dir}.zip" .
+              cd ..
+              cd "${dir}" || exit
+              zip -q -g "../zips/${dir}.zip" "${dir}.py"
+              cd ..
+            done
 
         - name: Upload artifact for deployment job
           uses: actions/upload-artifact@v4
