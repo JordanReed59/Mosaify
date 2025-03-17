@@ -85,7 +85,7 @@ jobs:
         uses: actions/download-artifact@v2
         with:
           name: python_deployment
-          path: .aws/terraform/zips
+          path: ../../src/backend/zips
         
       - name: Configure AWS credentials from AWS account
         uses: aws-actions/configure-aws-credentials@v1
