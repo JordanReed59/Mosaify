@@ -66,7 +66,7 @@ jobs:
             zip -q -g ../zips/option.zip option.py
 
         - name: Upload artifact for deployment job
-          uses: actions/upload-artifact@v2
+          uses: actions/upload-artifact@v4
           with:
             name: python_deployment
             path: src/backend/zips
