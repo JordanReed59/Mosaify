@@ -39,16 +39,16 @@ jobs:
         - name: Zip python dependencies
           run: |
             mkdir -p zips
-            cd auth_python
+            cd auth
             zip -q -r -g ../zips/auth.zip .
             cd ..
-            cd url_python
+            cd url
             zip -q -r -g ../zips/url.zip .
             cd ..
-            cd mosaify_python
+            cd mosaify
             zip -q -r -g ../zips/mosaify.zip .
             cd ..
-            cd option_python
+            cd option
             zip -q -r -g ../zips/option.zip .
 
         - name: Add source code to python dependencies zip
