@@ -60,7 +60,7 @@ jobs:
             zip -q -g ../zips/url.zip url.py
             cd ..
             cd ./url
-            zip -q -g ../zips/url.mosaify mosaify.py
+            zip -q -g ../zips/mosaify.zip mosaify.py
             cd ..
             cd ./option
             zip -q -g ../zips/option.zip option.py
