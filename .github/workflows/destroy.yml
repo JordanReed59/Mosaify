@@ -82,10 +82,10 @@ jobs:
           fi
 
       - name: Download artifact from build job
-        uses: actions/download-artifact@v2
+        uses: actions/download-artifact@v4
         with:
           name: python_deployment
-          path: ../../src/backend/zips
+          path: .aws/terraform/zips
         
       - name: Configure AWS credentials from AWS account
         uses: aws-actions/configure-aws-credentials@v1
